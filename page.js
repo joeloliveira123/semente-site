@@ -5,7 +5,7 @@ const maps = {
   sapopemba: 'https://www.google.com/maps/search/?api=1&query=Rua+Henrique+Mazzauti%2C+566%2C+Jardim+Sapopemba%2C+S%C3%A3o+Paulo+-+SP'
 };
 
-function header() {
+function renderHeader() {
   return `<header class="site-header" data-header><a class="brand" href="index.html" aria-label="Semente da Multiplicação — início"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span><span class="brand-text"><strong>Semente</strong><small>da Multiplicação</small></span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span><b class="sr-only">Abrir menu</b></button><nav class="main-nav" id="main-nav" aria-label="Navegação principal"><a href="historia.html">Quem somos</a><a href="locais.html">Locais</a><a href="projetos.html">Projetos</a><a href="eventos.html">Eventos</a><a href="contato.html">Contato</a><a class="nav-cta" href="contato.html#fale-conosco">Fale conosco <span aria-hidden="true">→</span></a></nav></header>`;
 }
 
@@ -27,4 +27,4 @@ const contato = `<main id="main"><section class="content-section section-white s
 
 const pages = {home, historia, locais, projetos, eventos, contato};
 const shell = document.querySelector('#site-shell');
-if (shell) shell.innerHTML = `${header()}${pages[page] || home}${footer()}`;
+if (shell) shell.innerHTML = `${renderHeader()}${pages[page] || home}${footer()}`;
