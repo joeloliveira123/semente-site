@@ -18,21 +18,27 @@ const projects = [
   ['07', 'Irmãos de Rua', 'Cuidado e restauração da dignidade de pessoas em situação de vulnerabilidade. Ação semanal às sextas-feiras, às 20h.', 'Mateus 25:35']
 ];
 
-document.querySelector('[data-goals]').innerHTML = goals.map(([number, title, text]) => `<article class="goal-card reveal"><span class="card-number">Meta ${number}</span><h3>${title}</h3><p>${text}</p></article>`).join('');
-document.querySelector('[data-projects]').innerHTML = projects.map(([number, title, text, verse]) => `<article class="project-card reveal"><span class="card-number">Projeto ${number}</span><h3>${title}</h3><p>${text}</p><span class="quote">${verse}</span></article>`).join('');
-document.querySelector('[data-year]').textContent = new Date().getFullYear();
+const goalsContainer = document.querySelector('[data-goals]');
+if (goalsContainer) goalsContainer.innerHTML = goals.map(([number, title, text]) => `<article class="goal-card reveal"><span class="card-number">Meta ${number}</span><h3>${title}</h3><p>${text}</p></article>`).join('');
+const projectsContainer = document.querySelector('[data-projects]');
+if (projectsContainer) projectsContainer.innerHTML = projects.map(([number, title, text, verse]) => `<article class="project-card reveal"><span class="card-number">Projeto ${number}</span><h3>${title}</h3><p>${text}</p><span class="quote">${verse}</span></article>`).join('');
+const yearContainer = document.querySelector('[data-year]');
+if (yearContainer) yearContainer.textContent = new Date().getFullYear();
 
 const header = document.querySelector('[data-header]');
-window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 12), {passive:true});
+if (header) window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 12), {passive:true});
 const menuButton = document.querySelector('.menu-toggle');
 const nav = document.querySelector('.main-nav');
-menuButton.addEventListener('click', () => { const open = nav.classList.toggle('open'); menuButton.setAttribute('aria-expanded', String(open)); });
-nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { nav.classList.remove('open'); menuButton.setAttribute('aria-expanded', 'false'); }));
+if (menuButton && nav) {
+  menuButton.addEventListener('click', () => { const open = nav.classList.toggle('open'); menuButton.setAttribute('aria-expanded', String(open)); });
+  nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { nav.classList.remove('open'); menuButton.setAttribute('aria-expanded', 'false'); }));
+}
 
 const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }), {threshold:.12});
 document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
 
-document.querySelector('[data-copy-pix]').addEventListener('click', async event => {
+const copyPix = document.querySelector('[data-copy-pix]');
+if (copyPix) copyPix.addEventListener('click', async event => {
   const button = event.currentTarget;
   const status = document.querySelector('.copy-status');
   try { await navigator.clipboard.writeText('03.397.109/0001-00'); status.textContent = 'Chave Pix copiada.'; button.innerHTML = 'Chave copiada <span aria-hidden="true">✓</span>'; } catch { status.textContent = 'Copie a chave Pix: 03.397.109/0001-00'; }
