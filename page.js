@@ -5,6 +5,15 @@ const maps = {
   sapopemba: 'https://www.google.com/maps/search/?api=1&query=Rua+Henrique+Mazzauti%2C+566%2C+Jardim+Sapopemba%2C+S%C3%A3o+Paulo+-+SP'
 };
 
+let favicon = document.querySelector('link[rel="icon"]');
+if (!favicon) {
+  favicon = document.createElement('link');
+  favicon.rel = 'icon';
+  favicon.type = 'image/png';
+  document.head.append(favicon);
+}
+favicon.href = 'assets/logo-semente-transparente.png';
+
 function renderHeader() {
   return `<header class="site-header" data-header><a class="brand" href="index.html" aria-label="Semente da Multiplicação — início"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span><span class="brand-text"><strong>Semente</strong><small>da Multiplicação</small></span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span><b class="sr-only">Abrir menu</b></button><nav class="main-nav" id="main-nav" aria-label="Navegação principal"><a href="historia.html">Sobre nós</a><a href="locais.html">Onde nos encontrar</a><a href="projetos.html">Projetos e missão</a><a href="eventos.html">Agenda</a><a href="contato.html">Conecte-se</a><a class="nav-cta" href="contato.html#fale-conosco">Fale conosco <span aria-hidden="true">→</span></a></nav></header>`;
 }

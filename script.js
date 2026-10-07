@@ -49,6 +49,45 @@ if (observer) {
   revealElements.forEach(element => element.classList.add('is-visible'));
 }
 
+const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? false;
+if (!prefersReducedMotion) {
+  const parallaxSections = [...document.querySelectorAll('.hero, .story, .events-section, .weekly-agenda, .content-section')];
+  parallaxSections.forEach(section => section.dataset.parallax = '');
+  let parallaxTicking = false;
+  const updateParallax = () => {
+    parallaxSections.forEach(section => {
+      const offset = Math.max(-32, Math.min(32, section.getBoundingClientRect().top * -.035));
+      section.style.setProperty('--parallax-shift', `${offset}px`);
+    });
+    parallaxTicking = false;
+  };
+  const requestParallax = () => {
+    if (!parallaxTicking) {
+      parallaxTicking = true;
+      window.requestAnimationFrame(updateParallax);
+    }
+  };
+  updateParallax();
+  window.addEventListener('scroll', requestParallax, {passive:true});
+
+  if (window.matchMedia?.('(pointer:fine)')?.matches ?? false) {
+    document.querySelectorAll('.button, .nav-cta, .card-actions a, .content-link').forEach(element => {
+      element.classList.add('magnetic');
+      element.addEventListener('pointermove', event => {
+        const bounds = element.getBoundingClientRect();
+        const x = (event.clientX - bounds.left - bounds.width / 2) * .08;
+        const y = (event.clientY - bounds.top - bounds.height / 2) * .08;
+        element.style.setProperty('--magnet-x', `${x}px`);
+        element.style.setProperty('--magnet-y', `${y}px`);
+      });
+      element.addEventListener('pointerleave', () => {
+        element.style.setProperty('--magnet-x', '0px');
+        element.style.setProperty('--magnet-y', '0px');
+      });
+    });
+  }
+}
+
 const copyPix = document.querySelector('[data-copy-pix]');
 if (copyPix) copyPix.addEventListener('click', async event => {
   const button = event.currentTarget;
