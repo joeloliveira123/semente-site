@@ -34,8 +34,20 @@ if (menuButton && nav) {
   nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { nav.classList.remove('open'); menuButton.setAttribute('aria-expanded', 'false'); }));
 }
 
-const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }), {threshold:.12});
-document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
+const revealElements = document.querySelectorAll('.reveal');
+const observer = 'IntersectionObserver' in window
+  ? new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    }), {threshold:.12})
+  : null;
+if (observer) {
+  revealElements.forEach(element => observer.observe(element));
+} else {
+  revealElements.forEach(element => element.classList.add('is-visible'));
+}
 
 const copyPix = document.querySelector('[data-copy-pix]');
 if (copyPix) copyPix.addEventListener('click', async event => {
