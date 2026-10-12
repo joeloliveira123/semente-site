@@ -191,8 +191,19 @@ const projects = [
 
 const goalsContainer = document.querySelector('[data-goals]');
 if (goalsContainer) goalsContainer.innerHTML = goals.map(([number, title, text]) => `<article class="goal-card reveal"><span class="card-number">Meta ${number}</span><h3>${title}</h3><p>${text}</p></article>`).join('');
+function getYouTubeVideoId(url) {
+  const match = String(url).match(/[?&]v=([^&]+)/);
+  return match ? match[1] : null;
+}
 const projectsContainer = document.querySelector('[data-projects]');
-if (projectsContainer) projectsContainer.innerHTML = projects.map(project => `<article class="project-card reveal"><span class="card-number">Projeto ${project.number}</span><h3>${project.title}</h3><p>${project.text}</p><details class="mission-details"><summary>Conheça esta missão <span aria-hidden="true">+</span></summary><p>${project.details}</p></details>${project.links.length ? `<div class="mission-links">${project.links.map(([label, url]) => `<a class="content-link" href="${url}" target="_blank" rel="noreferrer">${label} →</a>`).join('')}</div>` : ''}<span class="quote">${project.verse}</span></article>`).join('');
+if (projectsContainer) projectsContainer.innerHTML = projects.map(project => {
+  const video = project.links.find(([, url]) => getYouTubeVideoId(url));
+  const videoId = video ? getYouTubeVideoId(video[1]) : null;
+  const cover = videoId
+    ? `<a class="video-cover-link project-video-cover" href="${video[1]}" target="_blank" rel="noreferrer" aria-label="Assistir: ${project.title}"><img class="video-cover" src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="Capa do vídeo: ${project.title}" loading="lazy"><span class="video-play" aria-hidden="true">▶</span></a>`
+    : '<div class="video-cover-placeholder"><span>PROJETO<br>MISSIONÁRIO</span></div>';
+  return `<article class="project-card mission-card reveal">${cover}<div class="mission-card-body"><span class="card-number">Projeto ${project.number}</span><h3>${project.title}</h3><p>${project.text}</p><details class="mission-details"><summary>Conheça esta missão <span aria-hidden="true">+</span></summary><p>${project.details}</p></details>${project.links.length ? `<div class="mission-links">${project.links.map(([label, url]) => `<a class="content-link" href="${url}" target="_blank" rel="noreferrer">${label} →</a>`).join('')}</div>` : ''}<span class="quote">${project.verse}</span></div></article>`;
+}).join('');
 const yearContainer = document.querySelector('[data-year]');
 if (yearContainer) yearContainer.textContent = new Date().getFullYear();
 
