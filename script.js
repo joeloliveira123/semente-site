@@ -190,7 +190,7 @@ const projects = [
 const goalsContainer = document.querySelector('[data-goals]');
 if (goalsContainer) goalsContainer.innerHTML = goals.map(([number, title, text]) => `<article class="goal-card reveal"><span class="card-number">Meta ${number}</span><h3>${title}</h3><p>${text}</p></article>`).join('');
 const projectsContainer = document.querySelector('[data-projects]');
-if (projectsContainer) projectsContainer.innerHTML = projects.map(project => `<article class="project-card reveal"><span class="card-number">Projeto \${project.number}</span><h3>\${project.title}</h3><p>\${project.text}</p><details class="mission-details"><summary>Conheça esta missão <span aria-hidden="true">+</span></summary><p>\${project.details}</p></details>\${project.links.length ? `<div class="mission-links">\${project.links.map(([label, url]) => `<a class="content-link" href="\${url}" target="_blank" rel="noreferrer">\${label} →</a>`).join('')}</div>` : ''}<span class="quote">\${project.verse}</span></article>`).join('');
+if (projectsContainer) projectsContainer.innerHTML = projects.map(project => `<article class="project-card reveal"><span class="card-number">Projeto ${project.number}</span><h3>${project.title}</h3><p>${project.text}</p><details class="mission-details"><summary>Conheça esta missão <span aria-hidden="true">+</span></summary><p>${project.details}</p></details>${project.links.length ? `<div class="mission-links">${project.links.map(([label, url]) => `<a class="content-link" href="${url}" target="_blank" rel="noreferrer">${label} →</a>`).join('')}</div>` : ''}<span class="quote">${project.verse}</span></article>`).join('');
 const yearContainer = document.querySelector('[data-year]');
 if (yearContainer) yearContainer.textContent = new Date().getFullYear();
 
