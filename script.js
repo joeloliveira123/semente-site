@@ -101,48 +101,6 @@ const projects = [
     "links": []
   },
   {
-    "number": "07",
-    "title": "Missionários",
-    "text": "Referência histórica à atuação missionária ligada à igreja.",
-    "verse": "Romanos 10:15",
-    "details": "O site antigo apresentava uma área chamada Missionários. Não acrescentamos nomes, biografias ou destinos de envio sem confirmação documental.",
-    "links": []
-  },
-  {
-    "number": "08",
-    "title": "Missão Semente",
-    "text": "Nome presente no acervo histórico, associado a ações missionárias e conteúdos audiovisuais e musicais.",
-    "verse": "Salmos 126:5",
-    "details": "Entre os títulos históricos associados à Missão Semente estão Semente da Vida e Terra Prometida. O acervo também identificava conteúdo musical sob o nome Missão Semente.",
-    "links": [
-      [
-        "Buscar Semente da Vida no YouTube",
-        "https://www.youtube.com/results?search_query=Semente+da+Vida+Miss%C3%A3o+Semente"
-      ],
-      [
-        "Buscar Terra Prometida no YouTube",
-        "https://www.youtube.com/results?search_query=Terra+Prometida+Miss%C3%A3o+Semente"
-      ],
-      [
-        "Procurar Missão Semente no Spotify",
-        "https://open.spotify.com/search/Miss%C3%A3o%20Semente"
-      ]
-    ]
-  },
-  {
-    "number": "09",
-    "title": "Semente da Vida",
-    "text": "Nome original da igreja, constituída em 31 de janeiro de 1998.",
-    "verse": "1 Coríntios 3:6",
-    "details": "Segundo a história institucional recuperada, em 1998 a igreja foi constituída como Igreja Evangélica Apostólica Semente da Vida. Em 2002, passou a se chamar Igreja Evangélica Semente da Multiplicação.",
-    "links": [
-      [
-        "Buscar registro histórico de Semente da Vida",
-        "https://www.youtube.com/results?search_query=Semente+da+Vida+Miss%C3%A3o+Semente"
-      ]
-    ]
-  },
-  {
     "number": "10",
     "title": "Agência Missionária",
     "text": "Formação, envio e apoio a missionários no Brasil e no exterior.",
@@ -164,14 +122,6 @@ const projects = [
     "text": "Fortalecimento econômico e espiritual para empreendedores cristãos.",
     "verse": "Provérbios 16:3",
     "details": "Projeto listado no site novo. Não foram acrescentadas informações operacionais que não constem do material recuperado.",
-    "links": []
-  },
-  {
-    "number": "13",
-    "title": "Grupo de Apoio Emocional",
-    "text": "Cuidado integral, com atenção às dimensões emocional e espiritual.",
-    "verse": "Gálatas 6:2",
-    "details": "Projeto listado no site novo. A descrição não promete atendimento clínico nem acrescenta detalhes não confirmados.",
     "links": []
   },
   {
