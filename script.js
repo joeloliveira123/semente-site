@@ -133,7 +133,7 @@ const projects = [
     "links": [
       [
         "Ver Memórias e Registros",
-        "memorias.html"
+        "/memorias"
       ]
     ]
   }
