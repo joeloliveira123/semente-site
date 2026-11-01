@@ -242,20 +242,17 @@ function eventImageUrl(imagePath) {
   return imagePath;
 }
 
-const localEvents = [{
-  id: 'encontro-mulheres-2026',
-  title: 'Encontro Especial de Mulheres',
-  description: '“Lançando sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós.” — 1 Pedro 5:7',
-  starts_at: '2026-10-24T16:00:00-03:00',
-  location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
-  image_path: '',
-  link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP'
-}];
+const localEvents = [];
 
 function renderEvents(events) {
   const section = document.querySelector('#eventos');
   const container = document.querySelector('[data-events]');
-  if (!events.length || !section || !container) return;
+  if (!section || !container) return;
+  if (!events.length) {
+    container.innerHTML = '<p class="events-empty">Novos eventos e cultos especiais serão divulgados em breve. Acompanhe nossas programações semanais e lives de oração!</p>';
+    section.hidden = false;
+    return;
+  }
   container.innerHTML = events.sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)).map(event => {
     const start = new Date(event.starts_at);
     const day = new Intl.DateTimeFormat('pt-BR', {weekday:'long', day:'2-digit', month:'long', timeZone:'America/Sao_Paulo'}).format(start);

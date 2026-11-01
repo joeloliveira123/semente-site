@@ -96,3 +96,5 @@ html, body, #site-shell, main, .site-header, .site-footer {
   height: 22px;
   stroke: #173b45;
 }
+
+.events-empty{font-size:16px;color:var(--muted);background:var(--white);border:1px dashed var(--line);border-radius:var(--radius);padding:30px 26px;max-width:650px;line-height:1.6;margin:0}
