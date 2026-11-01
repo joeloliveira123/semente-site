@@ -249,8 +249,8 @@ function renderEvents(events) {
   const container = document.querySelector('[data-events]');
   if (!section || !container) return;
   if (!events.length) {
-    container.innerHTML = '<p class="events-empty">Novos eventos e cultos especiais serão divulgados em breve. Acompanhe nossas programações semanais e lives de oração!</p>';
-    section.hidden = false;
+    container.innerHTML = '';
+    section.hidden = true;
     return;
   }
   container.innerHTML = events.sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)).map(event => {
