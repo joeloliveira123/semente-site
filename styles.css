@@ -98,3 +98,595 @@ html, body, #site-shell, main, .site-header, .site-footer {
 }
 
 .events-empty{font-size:16px;color:var(--muted);background:var(--white);border:1px dashed var(--line);border-radius:var(--radius);padding:30px 26px;max-width:650px;line-height:1.6;margin:0}
+
+/* ==========================================================================
+   DARK / DEEP THEME · GLASSMORPHISM BENTO GRID · HIGH-IMPACT TYPOGRAPHY
+   ========================================================================== */
+
+:root {
+  --bg-deep: #09110E;
+  --bg-elevated: #0D1814;
+  --bg-glass: rgba(255, 255, 255, 0.03);
+  --bg-glass-hover: rgba(255, 255, 255, 0.055);
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(217, 255, 78, 0.48);
+  --white: #F3F8F5;
+  --paper: #0D1713;
+  --ink: #F3F8F5;
+  --muted: #94ADA2;
+  --lime: #D9FF4E;
+  --lime-soft: rgba(217, 255, 78, 0.12);
+  --emerald: #38F29B;
+  --petrol: #22D3EE;
+  --petrol-dark: #087C9A;
+  --line: rgba(255, 255, 255, 0.08);
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+  background-color: var(--bg-deep);
+  color: var(--white);
+}
+
+html, body {
+  background-color: var(--bg-deep);
+  color: var(--white);
+}
+
+/* 5. Textura de Ruído Analógico (Grain 4% opacidade) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+}
+
+/* 1. Luzes e Glows de Fundo (Ambient Orbs com blur de 90px a 120px) */
+.ambient-orbs {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ambient-orbs .orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(110px);
+  opacity: 0.42;
+  will-change: transform;
+}
+
+.ambient-orbs .orb-lime {
+  width: 520px;
+  height: 520px;
+  top: -140px;
+  right: -120px;
+  background: radial-gradient(circle, rgba(217, 255, 78, 0.26) 0%, rgba(56, 242, 155, 0.08) 55%, transparent 75%);
+  animation: floatOrbA 18s ease-in-out infinite alternate;
+}
+
+.ambient-orbs .orb-emerald {
+  width: 600px;
+  height: 600px;
+  top: 38%;
+  left: -180px;
+  background: radial-gradient(circle, rgba(8, 124, 154, 0.34) 0%, rgba(56, 242, 155, 0.12) 55%, transparent 75%);
+  animation: floatOrbB 22s ease-in-out infinite alternate;
+}
+
+.ambient-orbs .orb-petrol {
+  width: 540px;
+  height: 540px;
+  bottom: -160px;
+  right: 12%;
+  background: radial-gradient(circle, rgba(217, 255, 78, 0.18) 0%, rgba(8, 124, 154, 0.25) 55%, transparent 75%);
+  animation: floatOrbA 25s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes floatOrbA {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-40px, 50px, 0) scale(1.08); }
+}
+
+@keyframes floatOrbB {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(50px, -40px, 0) scale(1.1); }
+}
+
+#site-shell > header,
+#site-shell > main,
+#site-shell > footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Header Glassmorphism Escuro */
+.site-header {
+  background: rgba(9, 17, 14, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.site-header.scrolled {
+  background: rgba(9, 17, 14, 0.88);
+  border-color: rgba(217, 255, 78, 0.18);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45);
+}
+
+.brand-text strong {
+  color: #FFFFFF;
+}
+
+.brand-text small {
+  color: var(--lime);
+}
+
+.menu-toggle span {
+  background: #FFFFFF;
+}
+
+.main-nav a:not(.nav-cta) {
+  color: rgba(243, 248, 245, 0.78);
+  opacity: 1;
+}
+
+.main-nav a:not(.nav-cta):hover,
+.main-nav a:not(.nav-cta):focus-visible {
+  color: var(--lime);
+}
+
+/* Seções com atmosfera escura profunda */
+.section-white,
+.section-soft,
+.projects,
+.section-teal,
+.section-lime {
+  background: transparent;
+  color: var(--white);
+  position: relative;
+}
+
+.section-soft,
+.projects {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.015) 0%, rgba(13, 24, 20, 0.65) 50%, rgba(255, 255, 255, 0.01) 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.section-teal,
+.section-lime {
+  background: radial-gradient(circle at 18% 20%, rgba(217, 255, 78, 0.11), transparent 52%),
+              radial-gradient(circle at 82% 80%, rgba(8, 124, 154, 0.24), transparent 58%),
+              rgba(12, 23, 19, 0.82);
+  border-top: 1px solid rgba(217, 255, 78, 0.14);
+  border-bottom: 1px solid rgba(217, 255, 78, 0.14);
+  color: var(--white);
+}
+
+.intro-strip {
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.intro-strip p {
+  color: rgba(243, 248, 245, 0.88);
+}
+
+/* 4. Tipografia de Alto Impacto + Gradiente Metálico e Neon */
+h1, h2, h3 {
+  font-family: 'Space Grotesk', 'Syne', 'DM Sans', sans-serif;
+  letter-spacing: -0.045em;
+}
+
+h1 {
+  font-size: clamp(46px, 6.4vw, 88px);
+  line-height: 0.98;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: clamp(38px, 5.2vw, 70px);
+  line-height: 1.02;
+  font-weight: 700;
+}
+
+h1, h2 {
+  background: linear-gradient(180deg, #FFFFFF 0%, #EAF4EE 48%, #93ACA1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+h1 em, h2 em,
+.vision h2 em,
+.donation-copy h2 em,
+.contact h2 em,
+.memory-follow-inner h2 em,
+.street-mission h2 em {
+  font-style: normal;
+  background: linear-gradient(135deg, #D9FF4E 0%, #4FF29D 55%, #22D3EE 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 25px rgba(217, 255, 78, 0.18));
+}
+
+h3 {
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+/* 2. Contraste Neon e Elementos que Saltam */
+.kicker,
+.kicker-light {
+  color: var(--lime);
+  text-shadow: 0 0 18px rgba(217, 255, 78, 0.28);
+}
+
+.kicker i {
+  background: linear-gradient(90deg, var(--lime), rgba(217, 255, 78, 0.15));
+  box-shadow: 0 0 12px rgba(217, 255, 78, 0.45);
+}
+
+.button-primary,
+.nav-cta,
+.memory-spotify,
+.button-dark {
+  position: relative;
+  overflow: hidden;
+  background: var(--lime);
+  color: #08120E;
+  font-family: 'Space Grotesk', 'Nunito Sans', sans-serif;
+  font-weight: 700;
+  box-shadow: 0 0 26px rgba(217, 255, 78, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(217, 255, 78, 0.6);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.button-primary:hover,
+.nav-cta:hover,
+.memory-spotify:hover,
+.button-dark:hover {
+  background: #E5FF78;
+  color: #050B08;
+  transform: translateY(-3px);
+  box-shadow: 0 0 40px rgba(217, 255, 78, 0.55), 0 10px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Efeito de luz que acompanha o cursor nos botões */
+.button-primary::before,
+.nav-cta::before,
+.button-dark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(90px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.7), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.button-primary:hover::before,
+.nav-cta:hover::before,
+.button-dark:hover::before {
+  opacity: 1;
+}
+
+.quiet-link {
+  color: var(--white);
+  border-bottom: 1px solid rgba(217, 255, 78, 0.5);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.quiet-link:hover {
+  color: var(--lime);
+  border-color: var(--lime);
+}
+
+/* Símbolo Hero com atmosfera neon */
+.hero-symbol:before {
+  background: radial-gradient(circle, rgba(217, 255, 78, 0.28) 0%, rgba(8, 124, 154, 0.22) 60%, transparent 78%);
+  filter: blur(18px);
+}
+
+.hero-ring {
+  border-color: rgba(217, 255, 78, 0.35);
+  box-shadow: 0 0 20px rgba(217, 255, 78, 0.08);
+}
+
+.lime-dot {
+  background: var(--lime);
+  border-color: #09110E;
+  box-shadow: 0 0 16px var(--lime);
+}
+
+/* 3. Glassmorphism com Borda Luminosa (Bento Grid & Cards) */
+.goal-card,
+.goal-card:nth-child(2),
+.goal-card:nth-child(3),
+.goal-card:nth-child(5),
+.goal-card:nth-child(7),
+.project-card,
+.memory-grid .project-card,
+.projects-grid .project-card,
+.location-card,
+.location-card-lime,
+.agenda-item,
+.agenda-item-lime,
+.agenda-item-teal,
+.playlist-card,
+.content-link,
+.content-link.youtube,
+.content-link.instagram,
+.content-link.facebook,
+.content-link.tv,
+.pix-card,
+.form-card,
+.story-long,
+.hero-badge,
+.footer-contact a {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.018) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--white);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.32s ease,
+              box-shadow 0.32s ease,
+              background 0.32s ease;
+}
+
+/* Spotlight que acompanha o mouse dentro dos cards Bento */
+.goal-card::after,
+.project-card::after,
+.location-card::after,
+.agenda-item::after,
+.playlist-card::after,
+.content-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(360px circle at var(--mouse-x, 50%) var(--mouse-y, 0%), rgba(217, 255, 78, 0.09), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.goal-card > *,
+.project-card > *,
+.location-card > *,
+.agenda-item > *,
+.playlist-card > *,
+.content-link > * {
+  position: relative;
+  z-index: 1;
+}
+
+.goal-card:hover,
+.project-card:hover,
+.location-card:hover,
+.agenda-item:hover,
+.playlist-card:hover,
+.content-link:hover,
+.pix-card:hover,
+.footer-contact a:hover {
+  transform: translateY(-6px);
+  border-color: rgba(217, 255, 78, 0.48);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.065) 0%, rgba(217, 255, 78, 0.03) 100%);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65),
+              0 0 32px rgba(217, 255, 78, 0.14),
+              inset 0 1px 0 rgba(217, 255, 78, 0.28);
+}
+
+.goal-card:hover::after,
+.project-card:hover::after,
+.location-card:hover::after,
+.agenda-item:hover::after,
+.playlist-card:hover::after,
+.content-link:hover::after {
+  opacity: 1;
+}
+
+/* Destaque sutil nos cards especiais (Lime / Teal em versão Dark Glass) */
+.location-card-lime,
+.agenda-item-lime,
+.goal-card:nth-child(2),
+.goal-card:nth-child(5) {
+  background: linear-gradient(145deg, rgba(217, 255, 78, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(217, 255, 78, 0.22);
+}
+
+.agenda-item-teal {
+  background: linear-gradient(145deg, rgba(34, 211, 238, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(34, 211, 238, 0.22);
+}
+
+/* Textos internos dos cards no tema escuro */
+.goal-card p,
+.goal-card:nth-child(2) p,
+.goal-card:nth-child(5) p,
+.project-card p,
+.memory-card-body p,
+.mission-card-body > p,
+.address,
+.location-card-lime .address,
+.agenda-item small,
+.agenda-item-lime small,
+.agenda-item-teal small,
+.playlist-card p,
+.story-step p,
+.story-long details div {
+  color: var(--muted);
+}
+
+/* Badges Luminosos */
+.card-number,
+.location-number,
+.location-tag,
+.agenda-item span,
+.agenda-item-teal span,
+.playlist-card small,
+.story-step span,
+.pix-label,
+.hero-badge span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--lime);
+  background: rgba(217, 255, 78, 0.08);
+  border: 1px solid rgba(217, 255, 78, 0.22);
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+
+/* Formato Bento Grid Assimétrico (Desktop) */
+@media (min-width: 1001px) {
+  /* Home: 5 cards encaixados em Bento Grid 3 colunas */
+  .card-grid:not(.goals-grid):not(.projects-grid):not(.memory-grid) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .card-grid:not(.goals-grid):not(.projects-grid):not(.memory-grid) > .goal-card:nth-child(1) {
+    grid-column: span 2;
+    background: radial-gradient(circle at 90% 20%, rgba(217, 255, 78, 0.12), transparent 55%),
+                linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  }
+
+  /* Metas: 7 cards encaixados em Bento Grid 3 colunas (2+1, 1+1+1, 1+2) */
+  .goals-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .goals-grid > .goal-card:nth-child(1),
+  .goals-grid > .goal-card:nth-child(7) {
+    grid-column: span 2;
+  }
+}
+
+/* Ajustes de componentes específicos no modo Dark */
+.hero-badge b {
+  color: #FFFFFF;
+}
+
+.story-quote {
+  color: var(--lime);
+}
+
+.schedule h4,
+.card-actions a:last-child,
+.home-worship-contacts span,
+.mission-card-body .quote,
+.prayer-copy .quote,
+.copy-status {
+  color: var(--lime);
+}
+
+.card-actions a:hover {
+  color: var(--lime);
+}
+
+.daily-lives .home-worship-contacts b,
+.home-worship-contacts b,
+.contact-actions b {
+  color: var(--white);
+}
+
+.video-cover-link {
+  background: #0D1814;
+}
+
+.video-play {
+  background: var(--lime);
+  color: #08120E;
+  box-shadow: 0 0 24px rgba(217, 255, 78, 0.5);
+}
+
+.mission-links .content-link {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--line) !important;
+  box-shadow: none !important;
+  color: var(--lime) !important;
+  backdrop-filter: none !important;
+}
+
+.pix-card code {
+  color: #FFFFFF;
+}
+
+.playlist-icon {
+  background: rgba(217, 255, 78, 0.14);
+  border: 1px solid rgba(217, 255, 78, 0.35);
+  color: var(--lime);
+  box-shadow: 0 0 20px rgba(217, 255, 78, 0.18);
+}
+
+/* Formulário de Oração em Glassmorphism Escuro */
+.form-card label {
+  color: var(--lime);
+}
+
+.form-card input,
+.form-card select,
+.form-card textarea {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+}
+
+.form-card input::placeholder,
+.form-card textarea::placeholder {
+  color: rgba(148, 173, 162, 0.6);
+}
+
+.form-card select option {
+  background: #0D1814;
+  color: #FFFFFF;
+}
+
+.form-card input:focus,
+.form-card select:focus,
+.form-card textarea:focus {
+  border-color: var(--lime);
+  box-shadow: 0 0 0 4px rgba(217, 255, 78, 0.14);
+}
+
+.form-status[data-state=ok] {
+  color: var(--lime);
+}
+
+.form-status[data-state=error] {
+  color: #FF6B6B;
+}
+
+/* Menu Mobile no Tema Escuro */
+@media (max-width: 760px) {
+  .main-nav {
+    background: rgba(9, 17, 14, 0.96);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(217, 255, 78, 0.18);
+  }
+}
+
+/* Rodapé Profundo */
+.site-footer {
+  background: #060B09;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}

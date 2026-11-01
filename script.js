@@ -376,3 +376,69 @@ const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
     }
   });
 })();
+
+/* ===== Atmosfera Dark, Luz de Cursor (Bento Spotlight) e Contadores Cinéticos ===== */
+(function initAtmosphericAndKinetic() {
+  const shell = document.querySelector('#site-shell');
+  if (shell && !document.querySelector('.ambient-orbs')) {
+    const orbs = document.createElement('div');
+    orbs.className = 'ambient-orbs';
+    orbs.setAttribute('aria-hidden', 'true');
+    orbs.innerHTML = '<span class="orb orb-lime"></span><span class="orb orb-emerald"></span><span class="orb orb-petrol"></span>';
+    shell.prepend(orbs);
+  }
+
+  // Cursor spotlight para cards Bento e botões
+  const interactiveSelector = '.goal-card, .project-card, .location-card, .agenda-item, .playlist-card, .content-link, .button-primary, .nav-cta, .button-dark';
+  document.addEventListener('pointermove', event => {
+    const target = event.target.closest(interactiveSelector);
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    target.style.setProperty('--mouse-x', `${event.clientX - rect.left}px`);
+    target.style.setProperty('--mouse-y', `${event.clientY - rect.top}px`);
+  }, { passive: true });
+
+  // Contadores numéricos cinéticos quando entram na tela
+  if (!('IntersectionObserver' in window)) return;
+  const counterElements = document.querySelectorAll('.card-number, .location-number, .story-step span, .hero-badge span');
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      counterObserver.unobserve(el);
+      if (el.dataset.counted) return;
+      el.dataset.counted = 'true';
+
+      const original = el.textContent;
+      // Anima números (ex: "Desde 1997", "01 / 1997", "Meta 01", "01")
+      const matches = [...original.matchAll(/\d+/g)];
+      if (!matches.length) return;
+
+      const duration = 1100;
+      const startTime = performance.now();
+
+      const step = now => {
+        const progress = Math.min(1, (now - startTime) / duration);
+        const eased = 1 - Math.pow(1 - progress, 4); // easeOutQuart
+        let updated = original;
+        // Substitui da direita para a esquerda para preservar índices
+        for (let i = matches.length - 1; i >= 0; i--) {
+          const m = matches[i];
+          const targetVal = parseInt(m[0], 10);
+          const padLen = m[0].length;
+          const startVal = targetVal > 1900 ? 1900 : 0;
+          const currentVal = Math.round(startVal + (targetVal - startVal) * eased);
+          const formatted = padLen === 2 && targetVal < 100
+            ? String(currentVal).padStart(2, '0')
+            : String(currentVal);
+          updated = updated.slice(0, m.index) + formatted + updated.slice(m.index + m[0].length);
+        }
+        el.textContent = updated;
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }, { threshold: 0.25 });
+
+  counterElements.forEach(el => counterObserver.observe(el));
+})();
