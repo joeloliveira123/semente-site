@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Nega tudo por padrão (Default Deny / Princípio do Menor Privilégio)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Coleção de eventos: leitura pública apenas de eventos marcados como publicados
+    match /events/{eventId} {
+      allow read: if resource.data.is_published == true;
+      allow write: if false; // Criado e gerenciado diretamente no Firebase Console
+    }
+
+    // Coleção de pedidos de oração:
+    // Qualquer pessoa pode enviar (create) um pedido válido.
+    // Leitura, alteração e exclusão públicas são bloqueadas para garantir sigilo e privacidade dos fiéis.
+    match /prayer_requests/{requestId} {
+      allow create: if request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() <= 120
+                    && request.resource.data.reason is string
+                    && request.resource.data.reason.size() > 0
+                    && request.resource.data.reason.size() <= 4000;
+      allow read, update, delete: if false;
+    }
+  }
+}

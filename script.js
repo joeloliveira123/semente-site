@@ -235,8 +235,11 @@ function eventImageUrl(imagePath) {
   if (!imagePath) return '';
   if (/^https?:\/\//i.test(imagePath)) return imagePath;
   if (imagePath.startsWith('local:')) return imagePath.slice(6);
-  const config = window.SUPABASE_CONFIG;
-  return `${config.url}/storage/v1/object/public/${config.imageBucket}/${imagePath.split('/').map(encodeURIComponent).join('/')}`;
+  const config = window.FIREBASE_CONFIG;
+  if (config && config.storageBucket && !imagePath.startsWith('/')) {
+    return `https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/${imagePath.split('/').map(encodeURIComponent).join('/')}?alt=media`;
+  }
+  return imagePath;
 }
 
 const localEvents = [{
@@ -275,28 +278,104 @@ function renderEvents(events) {
 }
 
 async function loadPublishedEvents() {
-  const config = window.SUPABASE_CONFIG;
   const section = document.querySelector('#eventos');
   const container = document.querySelector('[data-events]');
   if (!section || !container) return;
   let events = [...localEvents];
-  if (!config?.url || !config?.publishableKey) {
+  if (!window.db) {
     renderEvents(events);
     return;
   }
-  const query = new URLSearchParams({select:'id,title,description,starts_at,location,image_path,link_url',is_published:'eq.true',order:'starts_at.asc'});
   try {
-    const response = await fetch(`${config.url}/rest/v1/events?${query}`, {headers:{apikey:config.publishableKey,Authorization:`Bearer ${config.publishableKey}`}});
-    if (!response.ok) throw new Error(`Supabase events request failed: ${response.status}`);
-    const remoteEvents = await response.json();
+    const snapshot = await window.db.collection('events')
+      .where('is_published', '==', true)
+      .orderBy('starts_at', 'asc')
+      .get();
+    const remoteEvents = [];
+    snapshot.forEach(doc => {
+      remoteEvents.push({ id: doc.id, ...doc.data() });
+    });
     const eventKey = event => `${event.title}|${new Date(event.starts_at).getTime()}`;
     const remoteKeys = new Set(remoteEvents.map(eventKey));
     events = [...remoteEvents, ...localEvents.filter(event => !remoteKeys.has(eventKey(event)))];
     renderEvents(events);
   } catch (error) {
-    console.warn('Não foi possível carregar os eventos publicados.', error);
+    console.warn('Não foi possível carregar os eventos publicados do Firebase.', error);
     renderEvents(events);
   }
 }
 
 loadPublishedEvents();
+
+
+/* ===== Playlists do mês e pedido de oração ===== */
+// Para atualizar a cada mês, troque o mês e os links abaixo.
+const PLAYLISTS = {
+  month: 'Novembro',
+  items: [
+    {church: 'Jardim Sapopemba', url: 'https://music.youtube.com/playlist?list=COLE_AQUI_O_ID'},
+    {church: 'Vila Antonieta', url: 'https://music.youtube.com/playlist?list=COLE_AQUI_O_ID'}
+  ]
+};
+const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
+
+(function initPlaylists(){
+  const box = document.querySelector('[data-playlists]');
+  if (!box) return;
+  box.innerHTML = PLAYLISTS.items.map(p => `<article class="playlist-card"><span class="playlist-icon" aria-hidden="true">♪</span><small>Playlist de ${PLAYLISTS.month}</small><h3>${p.church}</h3><p>Todas as músicas que vamos cantar em ${PLAYLISTS.month.toLowerCase()} na congregação ${p.church}.</p><a class="button button-primary" href="${p.url}" target="_blank" rel="noreferrer">Ouvir no YouTube Music <span aria-hidden="true">→</span></a></article>`).join('');
+})();
+
+(function initPrayerForm(){
+  const form = document.querySelector('[data-prayer-form]');
+  if (!form) return;
+  const status = form.querySelector('.form-status');
+  const button = form.querySelector('button[type="submit"]');
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    if (data._honey) return;
+    if (!data.nome.trim() || !data.motivo.trim()) {
+      status.textContent = 'Por favor, preencha seu nome e o motivo da oração.';
+      status.dataset.state = 'error';
+      return;
+    }
+    button.disabled = true;
+    status.dataset.state = '';
+    status.textContent = 'Enviando...';
+    const payload = {
+      name: data.nome.trim(),
+      email: data.email.trim() || null,
+      congregation: data.congregacao || null,
+      reason: data.motivo.trim(),
+      created_at: new Date().toISOString()
+    };
+    const jobs = [
+      fetch(`https://formsubmit.co/ajax/${PRAYER_EMAIL}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          _subject: `Novo pedido de oração - ${payload.name}`,
+          Nome: payload.name,
+          Email: payload.email || 'não informado',
+          Congregacao: payload.congregation || 'não informada',
+          Motivo: payload.reason,
+          _template: 'table',
+          _captcha: 'false'
+        })
+      }).then(r => { if (!r.ok) throw new Error('email'); })
+    ];
+    if (window.db) {
+      jobs.push(window.db.collection('prayer_requests').add(payload));
+    }
+    const results = await Promise.allSettled(jobs);
+    button.disabled = false;
+    if (results.some(r => r.status === 'fulfilled')) {
+      form.reset();
+      status.dataset.state = 'ok';
+      status.textContent = 'Recebemos seu pedido! Vamos orar por você. Deus te abençoe.';
+    } else {
+      status.dataset.state = 'error';
+      status.textContent = 'Não foi possível enviar agora. Tente novamente ou fale com a gente pelo WhatsApp.';
+    }
+  });
+})();
