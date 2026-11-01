@@ -1,25 +1,24 @@
-// Configuração do Google Firebase (Firestore)
-// Substitua os dados abaixo pelos dados do seu projeto no Console do Firebase:
-// https://console.firebase.google.com/
+// Configuração do Google Firebase (Firestore) - Projeto: semente-multiplicacao
 window.FIREBASE_CONFIG = Object.freeze({
-  apiKey: "SEU_API_KEY",
-  authDomain: "semente-site.firebaseapp.com",
-  projectId: "semente-site",
-  storageBucket: "semente-site.appspot.com",
-  messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyCTkCZOiakbvyiRGAIpa06ebh1RIqKFIec",
+  authDomain: "semente-multiplicacao.firebaseapp.com",
+  projectId: "semente-multiplicacao",
+  storageBucket: "semente-multiplicacao.firebasestorage.app",
+  messagingSenderId: "267403455746",
+  appId: "1:267403455746:web:9a9e2b6b585e4b6a24a61b",
+  measurementId: "G-PY4KHX6BCK"
 });
 
 // Inicialização automática do Firebase Firestore
 (function initFirebase() {
   const config = window.FIREBASE_CONFIG;
-  if (typeof firebase !== 'undefined' && config && config.projectId && config.projectId !== 'semente-site') {
+  if (typeof firebase !== 'undefined' && config && config.apiKey && !config.apiKey.startsWith('SEU_')) {
     try {
       if (!firebase.apps.length) {
         firebase.initializeApp(config);
       }
       window.db = firebase.firestore();
-      console.log('Firebase conectado com sucesso.');
+      console.log('Firebase conectado com sucesso ao projeto semente-multiplicacao.');
     } catch (err) {
       console.warn('Não foi possível inicializar o Firebase:', err);
     }
