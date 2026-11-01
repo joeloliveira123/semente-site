@@ -731,3 +731,90 @@ h3 {
   object-fit: contain !important;
   filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.65));
 }
+
+/* ===== LOGO MOTION: REVOADA DE POMBOS BRANCOS ===== */
+.dove-sky {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  overflow: hidden;
+}
+
+.dove-entity {
+  position: absolute;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 35px rgba(217, 255, 78, 0.4));
+  pointer-events: none;
+  opacity: 0;
+}
+
+.flight-dove {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: doveBob 0.42s ease-in-out infinite alternate;
+}
+
+.dove-wing-front {
+  transform-origin: 48px 30px;
+  animation: flapFront 0.28s ease-in-out infinite alternate;
+}
+
+.dove-wing-back {
+  transform-origin: 44px 26px;
+  animation: flapBack 0.28s ease-in-out infinite alternate;
+  animation-delay: -0.05s;
+}
+
+@keyframes flapFront {
+  0% { transform: rotate(0deg) scaleY(1); }
+  100% { transform: rotate(-44deg) scaleY(0.24) translateY(9px); }
+}
+
+@keyframes flapBack {
+  0% { transform: rotate(0deg) scaleY(1); }
+  100% { transform: rotate(-36deg) scaleY(0.3) translateY(7px); }
+}
+
+@keyframes doveBob {
+  0% { transform: translateY(0px) rotate(0deg); }
+  100% { transform: translateY(-5px) rotate(3deg); }
+}
+
+/* Trajetória de voo fluido através da tela */
+@keyframes flightCross {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--start-x, -120px), var(--start-y, 80vh), 0) scale(var(--scale, 1)) rotate(var(--angle, -18deg));
+  }
+  12% {
+    opacity: var(--target-opacity, 0.95);
+  }
+  85% {
+    opacity: var(--target-opacity, 0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--end-x, 115vw), var(--end-y, -15vh), 0) scale(var(--scale, 1)) rotate(var(--angle, -24deg));
+  }
+}
+
+.dove-entity.flying {
+  animation: flightCross var(--duration, 3.2s) cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+/* Transição de página suave com revoada */
+body.page-transitioning {
+  transition: opacity 0.4s ease;
+}
+
+/* Efeito de destaque no cursor e logo ao passar o mouse */
+.brand:hover .brand-mark img,
+.logo-lockup:hover img {
+  transform: scale(1.08) rotate(-2deg);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  filter: drop-shadow(0 0 25px rgba(217, 255, 78, 0.65));
+}
