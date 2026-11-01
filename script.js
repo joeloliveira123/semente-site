@@ -248,7 +248,7 @@ const localEvents = [{
   description: '“Lançando sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós.” — 1 Pedro 5:7',
   starts_at: '2026-10-24T16:00:00-03:00',
   location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
-  image_path: 'local:assets/encontro-mulheres.jpeg',
+  image_path: '',
   link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP'
 }];
 
