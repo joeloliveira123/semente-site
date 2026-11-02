@@ -121,9 +121,67 @@ html, body, #site-shell, main, .site-header, .site-footer {
   --petrol-dark: #087C9A;
   --line: rgba(255, 255, 255, 0.08);
   --shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+  --max: min(1440px, 94vw);
+  --side-pad: clamp(20px, 3.2vw, 44px);
   color-scheme: dark;
   background-color: var(--bg-deep);
   color: var(--white);
+}
+
+/* Espaçamento lateral otimizado para preencher telas de notebook e desktop sem bordas vazias */
+.section-pad {
+  padding: clamp(64px, 7vw, 105px) var(--side-pad) !important;
+}
+
+.hero {
+  max-width: var(--max) !important;
+  min-height: calc(100vh - 82px);
+  margin: 0 auto !important;
+  padding: clamp(60px, 7vw, 100px) var(--side-pad) !important;
+  width: 100%;
+}
+
+.site-header {
+  padding: 0 var(--side-pad) !important;
+  max-width: 100%;
+}
+
+.site-footer {
+  padding: 60px var(--side-pad) 24px !important;
+  width: 100%;
+}
+
+.locations, .projects {
+  padding-left: var(--side-pad) !important;
+  padding-right: var(--side-pad) !important;
+}
+
+.intro-strip {
+  padding: 26px var(--side-pad) !important;
+  width: 100%;
+}
+
+.content-section,
+.donation,
+.contact,
+.prayer,
+.playlists,
+.story,
+.weekly-agenda,
+.events-section,
+.daily-lives,
+.home-worship,
+.memory-hero,
+.memory-archive,
+.memory-follow-inner,
+.footer-top,
+.footer-contact,
+.footer-links,
+.footer-bottom {
+  max-width: var(--max) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: 100% !important;
 }
 
 html, body {
@@ -499,24 +557,62 @@ h3 {
   opacity: 1;
 }
 
-/* Destaque sutil nos cards especiais (Lime / Teal em versão Dark Glass) */
+/* 3. Glassmorphism Unificado e Harmônico para TODOS os Cards (Design completo e uniforme) */
+.goal-card,
+.project-card,
+.location-card,
 .location-card-lime,
+.agenda-item,
 .agenda-item-lime,
-.goal-card:nth-child(2),
-.goal-card:nth-child(5) {
-  background: linear-gradient(145deg, rgba(217, 255, 78, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border-color: rgba(217, 255, 78, 0.22);
+.agenda-item-teal,
+.playlist-card,
+.content-link,
+.content-link.youtube,
+.content-link.instagram,
+.content-link.facebook,
+.content-link.tv,
+.pix-card,
+.form-card,
+.story-long,
+.hero-badge,
+.footer-contact a {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.018) 100%) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: var(--white) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.32s ease,
+              box-shadow 0.32s ease,
+              background 0.32s ease;
+  grid-column: auto !important;
 }
 
-.agenda-item-teal {
-  background: linear-gradient(145deg, rgba(34, 211, 238, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border-color: rgba(34, 211, 238, 0.22);
+/* Hover consistente e elegante em todos os cards */
+.goal-card:hover,
+.project-card:hover,
+.location-card:hover,
+.location-card-lime:hover,
+.agenda-item:hover,
+.agenda-item-lime:hover,
+.agenda-item-teal:hover,
+.playlist-card:hover,
+.content-link:hover,
+.pix-card:hover,
+.footer-contact a:hover {
+  transform: translateY(-6px);
+  border-color: rgba(217, 255, 78, 0.48) !important;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.07) 0%, rgba(217, 255, 78, 0.035) 100%) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65),
+              0 0 32px rgba(217, 255, 78, 0.14),
+              inset 0 1px 0 rgba(217, 255, 78, 0.28);
 }
 
-/* Textos internos dos cards no tema escuro */
+/* Textos internos 100% uniformes */
 .goal-card p,
-.goal-card:nth-child(2) p,
-.goal-card:nth-child(5) p,
 .project-card p,
 .memory-card-body p,
 .mission-card-body > p,
@@ -528,14 +624,15 @@ h3 {
 .playlist-card p,
 .story-step p,
 .story-long details div {
-  color: var(--muted);
+  color: var(--muted) !important;
 }
 
-/* Badges Luminosos */
+/* Badges e tags 100% uniformes */
 .card-number,
 .location-number,
 .location-tag,
 .agenda-item span,
+.agenda-item-lime span,
 .agenda-item-teal span,
 .playlist-card small,
 .story-step span,
@@ -549,34 +646,110 @@ h3 {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--lime);
-  background: rgba(217, 255, 78, 0.08);
-  border: 1px solid rgba(217, 255, 78, 0.22);
+  color: var(--lime) !important;
+  background: rgba(217, 255, 78, 0.08) !important;
+  border: 1px solid rgba(217, 255, 78, 0.22) !important;
   padding: 5px 11px;
   border-radius: 999px;
 }
 
-/* Formato Bento Grid Assimétrico (Desktop) */
-@media (min-width: 1001px) {
-  /* Home: 5 cards encaixados em Bento Grid 3 colunas */
-  .card-grid:not(.goals-grid):not(.projects-grid):not(.memory-grid) {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-  .card-grid:not(.goals-grid):not(.projects-grid):not(.memory-grid) > .goal-card:nth-child(1) {
-    grid-column: span 2;
-    background: radial-gradient(circle at 90% 20%, rgba(217, 255, 78, 0.12), transparent 55%),
-                linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  }
+/* Grids Perfeitos e Completos - Sem cartões esticados ou diferentes dos de baixo */
+.card-grid {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+  width: 100%;
+}
 
-  /* Metas: 7 cards encaixados em Bento Grid 3 colunas (2+1, 1+1+1, 1+2) */
-  .goals-grid {
-    grid-template-columns: repeat(3, 1fr);
+/* Home: No notebook e desktop (a partir de 1120px), os 5 cards formam uma linha contínua e perfeitamente equilibrada */
+@media (min-width: 1120px) {
+  .card-grid:not(.goals-grid):not(.projects-grid):not(.memory-grid) {
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
   }
-  .goals-grid > .goal-card:nth-child(1),
-  .goals-grid > .goal-card:nth-child(7) {
-    grid-column: span 2;
+}
+
+/* Metas da igreja (7 cards): grid uniforme de colunas iguais, sem 'span 2' */
+.goals-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 22px;
+  width: 100%;
+}
+
+/* Remove qualquer span 2 residual */
+.card-grid > *,
+.goals-grid > * {
+  grid-column: auto !important;
+}
+
+/* Agenda semanal: 5 cards em colunas proporcionais */
+.agenda-grid {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+@media (min-width: 1120px) {
+  .agenda-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Locais de culto: 2 colunas idênticas lado a lado */
+.location-grid {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+@media (max-width: 860px) {
+  .location-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Memórias e Projetos: grid uniforme de 3 colunas */
+.memory-grid,
+.projects-grid {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+/* Playlists de louvor: 2 colunas idênticas */
+.playlist-grid {
+  max-width: var(--max);
+  margin: 40px auto 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+@media (max-width: 860px) {
+  .playlist-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Redes sociais na página Conecte-se: 4 colunas em notebook/desktop */
+.content-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+@media (min-width: 1200px) {
+  .content-links {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
