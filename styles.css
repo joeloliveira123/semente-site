@@ -1028,3 +1028,172 @@ body.page-transitioning {
   transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
   filter: drop-shadow(0 0 25px rgba(217, 255, 78, 0.65));
 }
+
+
+/* ===== MOTION DESIGN SYSTEM (Diretrizes Premium / Organic Motion) ===== */
+
+/* 1. Micro-interações táteis nos Botões (Anticipation & Squash/Stretch) */
+.button-primary:active,
+.nav-cta:active,
+.memory-spotify:active,
+.button-dark:active {
+  transform: translateY(0px) scale(0.97) !important;
+  transition: transform 0.08s cubic-bezier(0.4, 0, 1, 1) !important;
+}
+
+/* Shimmer sutil e elegante nos botões principais de CTA */
+.button-primary::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 55%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: rotate(25deg);
+  pointer-events: none;
+  animation: buttonShimmer 5.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes buttonShimmer {
+  0%, 75% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* 2. Secondary Motion: Setas e links deslizam suavemente ao passar o mouse */
+.button span,
+.quiet-link span,
+.card-actions a,
+.intro-strip a,
+.footer-contact a,
+.content-link strong {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+}
+
+.button:hover span,
+.quiet-link:hover span {
+  transform: translateX(5px);
+}
+
+.content-link:hover strong {
+  transform: translateX(5px);
+  color: var(--lime);
+}
+
+.card-actions a:hover {
+  transform: translateX(4px);
+}
+
+/* 3. Follow-Through nos Cards: Badge ilumina e ganha pulso suave no hover */
+.goal-card .card-number,
+.location-card .location-number,
+.location-card .location-tag,
+.agenda-item span,
+.playlist-card small {
+  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.26s ease,
+              border-color 0.26s ease,
+              box-shadow 0.26s ease;
+}
+
+.goal-card:hover .card-number,
+.location-card:hover .location-number,
+.location-card:hover .location-tag,
+.agenda-item:hover span,
+.playlist-card:hover small {
+  transform: scale(1.06);
+  border-color: rgba(217, 255, 78, 0.6) !important;
+  background: rgba(217, 255, 78, 0.18) !important;
+  box-shadow: 0 0 16px rgba(217, 255, 78, 0.32);
+}
+
+/* 4. Ambient Life: Flutuação orgânica do badge no Hero */
+.hero-badge {
+  animation: badgeFloat 4.6s ease-in-out infinite alternate !important;
+  will-change: transform;
+}
+
+@keyframes badgeFloat {
+  0% { transform: rotate(-4deg) translateY(0px); }
+  100% { transform: rotate(-3deg) translateY(-8px); }
+}
+
+/* 5. Menu de Navegação: Linha de destaque animada ao passar o mouse */
+.main-nav a:not(.nav-cta) {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.main-nav a:not(.nav-cta)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--lime), #38F29B);
+  box-shadow: 0 0 8px rgba(217, 255, 78, 0.6);
+  border-radius: 999px;
+  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.main-nav a:not(.nav-cta):hover::after,
+.main-nav a:not(.nav-cta):focus-visible::after {
+  width: 100%;
+}
+
+/* 6. Revelação ao Rolar a Página (Choreographed Stagger - Curva Premium) */
+.js-enabled .reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(6px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter;
+}
+
+.js-enabled .reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Efeito cascata para os cards quando entram no campo de visão */
+.card-grid .reveal:nth-child(1) { transition-delay: 0.04s; }
+.card-grid .reveal:nth-child(2) { transition-delay: 0.09s; }
+.card-grid .reveal:nth-child(3) { transition-delay: 0.14s; }
+.card-grid .reveal:nth-child(4) { transition-delay: 0.19s; }
+.card-grid .reveal:nth-child(5) { transition-delay: 0.24s; }
+.card-grid .reveal:nth-child(6) { transition-delay: 0.29s; }
+.card-grid .reveal:nth-child(7) { transition-delay: 0.34s; }
+
+.agenda-grid .reveal:nth-child(1) { transition-delay: 0.04s; }
+.agenda-grid .reveal:nth-child(2) { transition-delay: 0.09s; }
+.agenda-grid .reveal:nth-child(3) { transition-delay: 0.14s; }
+.agenda-grid .reveal:nth-child(4) { transition-delay: 0.19s; }
+.agenda-grid .reveal:nth-child(5) { transition-delay: 0.24s; }
+
+.location-grid .reveal:nth-child(1) { transition-delay: 0.05s; }
+.location-grid .reveal:nth-child(2) { transition-delay: 0.12s; }
+
+/* 7. Respeito rigoroso a prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-badge,
+  .button-primary::after {
+    animation: none !important;
+  }
+  .js-enabled .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+  .button span,
+  .quiet-link span,
+  .content-link strong,
+  .main-nav a:not(.nav-cta)::after {
+    transition: none !important;
+  }
+}
