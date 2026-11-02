@@ -189,6 +189,43 @@ html, body {
   color: var(--white);
 }
 
+/* ===== Acessibilidade (A11y): Indicador de Foco de Alto Contraste (WCAG 2.4.7) ===== */
+:focus-visible {
+  outline: 2px solid var(--lime) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 14px rgba(217, 255, 78, 0.45) !important;
+}
+
+.skip-link {
+  position: fixed;
+  left: 20px;
+  top: 14px;
+  z-index: 10000;
+  background: var(--lime);
+  color: #08120E !important;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 12px 18px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(217, 255, 78, 0.4);
+  transform: translateY(-160%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0) !important;
+  outline: 2px solid #FFFFFF !important;
+  outline-offset: 2px !important;
+}
+
+.menu-toggle {
+  min-width: 44px;
+  min-height: 44px;
+}
+
 /* 5. Textura de Ruído Analógico (Grain 4% opacidade) */
 body::after {
   content: "";
