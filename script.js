@@ -311,7 +311,7 @@ const PLAYLISTS = {
   month: 'Novembro',
   items: [
     {church: 'Jardim Sapopemba', url: 'https://music.youtube.com/playlist?list=COLE_AQUI_O_ID'},
-    {church: 'Vila Antonieta', url: 'https://music.youtube.com/playlist?list=COLE_AQUI_O_ID'}
+    {church: 'Vila Antonieta', url: 'https://music.youtube.com/playlist?list=PLVySTvS_ScAM&si=gRjyeu-SeU9EsXgU'}
   ]
 };
 const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
