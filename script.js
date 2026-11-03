@@ -145,14 +145,23 @@ function getYouTubeVideoId(url) {
   const match = String(url).match(/[?&]v=([^&]+)/);
   return match ? match[1] : null;
 }
+const projectBadges = {
+  '06': { tag: 'Missões & Povos', icon: '🌍' },
+  '10': { tag: 'Capacitação & Envio', icon: '🕊️' },
+  '11': { tag: 'Palavra & Ensino', icon: '📖' },
+  '12': { tag: 'Vocação & Trabalho', icon: '🌱' },
+  '14': { tag: 'Cuidado & Presença', icon: '🤝' }
+};
+
 const projectsContainer = document.querySelector('[data-projects]');
 if (projectsContainer) projectsContainer.innerHTML = projects.map(project => {
   const video = project.links.find(([, url]) => getYouTubeVideoId(url));
   const videoId = video ? getYouTubeVideoId(video[1]) : null;
+  const badge = projectBadges[project.number] || { tag: 'Ação Comunitária', icon: '✝️' };
   const cover = videoId
     ? `<a class="video-cover-link project-video-cover" href="${video[1]}" target="_blank" rel="noreferrer" aria-label="Assistir: ${project.title}"><img class="video-cover" src="https://img.youtube.com/vi/${videoId}/hqdefault.jpg" alt="Capa do vídeo: ${project.title}" loading="lazy"><span class="video-play" aria-hidden="true">▶</span></a>`
-    : '<div class="video-cover-placeholder"><span>PROJETO<br>MISSIONÁRIO</span></div>';
-  return `<article class="project-card mission-card reveal">${cover}<div class="mission-card-body"><span class="card-number">Projeto ${project.number}</span><h3>${project.title}</h3><p>${project.text}</p><details class="mission-details"><summary>Conheça esta missão <span aria-hidden="true">+</span></summary><p>${project.details}</p></details>${project.links.length ? `<div class="mission-links">${project.links.map(([label, url]) => `<a class="content-link" href="${url}" target="_blank" rel="noreferrer">${label} →</a>`).join('')}</div>` : ''}<span class="quote">${project.verse}</span></div></article>`;
+    : `<div class="video-cover-placeholder mission-thematic-cover thematic-${project.number}"><span class="thematic-icon" aria-hidden="true">${badge.icon}</span><span class="thematic-tag">${badge.tag}</span></div>`;
+  return `<article class="project-card mission-card reveal">${cover}<div class="mission-card-body"><span class="card-number">Projeto ${project.number}</span><h3>${project.title}</h3><p>${project.text}</p><details class="mission-details"><summary>Conheça esta missão <span aria-hidden="true">+</span></summary><p>${project.details}</p></details>${project.links.length ? `<div class="mission-links">${project.links.map(([label, url]) => `<a class="content-link" href="${url}" target="_blank" rel="noreferrer">${label} →</a>`).join('')}</div>` : ''}<span class="quote">“${project.verse}”</span></div></article>`;
 }).join('');
 const yearContainer = document.querySelector('[data-year]');
 if (yearContainer) yearContainer.textContent = new Date().getFullYear();
@@ -209,22 +218,6 @@ if (!prefersReducedMotion) {
   updateParallax();
   window.addEventListener('scroll', requestParallax, {passive:true});
 
-  if (window.matchMedia?.('(pointer:fine)')?.matches ?? false) {
-    document.querySelectorAll('.button, .nav-cta, .card-actions a, .content-link').forEach(element => {
-      element.classList.add('magnetic');
-      element.addEventListener('pointermove', event => {
-        const bounds = element.getBoundingClientRect();
-        const x = (event.clientX - bounds.left - bounds.width / 2) * .08;
-        const y = (event.clientY - bounds.top - bounds.height / 2) * .08;
-        element.style.setProperty('--magnet-x', `${x}px`);
-        element.style.setProperty('--magnet-y', `${y}px`);
-      });
-      element.addEventListener('pointerleave', () => {
-        element.style.setProperty('--magnet-x', '0px');
-        element.style.setProperty('--magnet-y', '0px');
-      });
-    });
-  }
 }
 
 const copyPix = document.querySelector('[data-copy-pix]');
@@ -317,7 +310,7 @@ loadPublishedEvents();
 const PLAYLISTS = {
   month: 'Novembro',
   items: [
-    {church: 'Jardim Sapopemba', url: 'https://music.youtube.com/playlist?list=COLE_AQUI_O_ID'},
+    {church: 'Jardim Sapopemba', url: 'https://music.youtube.com/search?q=Igreja+Evang%C3%A9lica+Semente+da+Multiplica%C3%A7%C3%A3o+Louvor'},
     {church: 'Vila Antonieta', url: 'https://music.youtube.com/playlist?list=PLVySTvS_ScAM&si=gRjyeu-SeU9EsXgU'}
   ]
 };
@@ -384,174 +377,6 @@ const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
   });
 })();
 
-/* ===== Atmosfera Dark, Luz de Cursor (Bento Spotlight) e Contadores Cinéticos ===== */
-(function initAtmosphericAndKinetic() {
-  const shell = document.querySelector('#site-shell');
-  if (shell && !document.querySelector('.ambient-orbs')) {
-    const orbs = document.createElement('div');
-    orbs.className = 'ambient-orbs';
-    orbs.setAttribute('aria-hidden', 'true');
-    orbs.innerHTML = '<span class="orb orb-lime"></span><span class="orb orb-emerald"></span><span class="orb orb-petrol"></span>';
-    shell.prepend(orbs);
-  }
+/* ===== Movimento Sereno e Estabilidade Visual ===== */
+window.launchDoveMotion = () => {};
 
-  // Cursor spotlight para cards Bento e botões
-  const interactiveSelector = '.goal-card, .project-card, .location-card, .agenda-item, .playlist-card, .content-link, .button-primary, .nav-cta, .button-dark';
-  document.addEventListener('pointermove', event => {
-    const target = event.target.closest(interactiveSelector);
-    if (!target) return;
-    const rect = target.getBoundingClientRect();
-    target.style.setProperty('--mouse-x', `${event.clientX - rect.left}px`);
-    target.style.setProperty('--mouse-y', `${event.clientY - rect.top}px`);
-  }, { passive: true });
-
-  // Contadores numéricos cinéticos quando entram na tela
-  if (!('IntersectionObserver' in window)) return;
-  const counterElements = document.querySelectorAll('.card-number, .location-number, .story-step span, .hero-badge span');
-  const counterObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const el = entry.target;
-      counterObserver.unobserve(el);
-      if (el.dataset.counted) return;
-      el.dataset.counted = 'true';
-
-      const original = el.textContent;
-      // Anima números (ex: "Desde 1997", "01 / 1997", "Meta 01", "01")
-      const matches = [...original.matchAll(/\d+/g)];
-      if (!matches.length) return;
-
-      const duration = 1100;
-      const startTime = performance.now();
-
-      const step = now => {
-        const progress = Math.min(1, (now - startTime) / duration);
-        const eased = 1 - Math.pow(1 - progress, 4); // easeOutQuart
-        let updated = original;
-        // Substitui da direita para a esquerda para preservar índices
-        for (let i = matches.length - 1; i >= 0; i--) {
-          const m = matches[i];
-          const targetVal = parseInt(m[0], 10);
-          const padLen = m[0].length;
-          const startVal = targetVal > 1900 ? 1900 : 0;
-          const currentVal = Math.round(startVal + (targetVal - startVal) * eased);
-          const formatted = padLen === 2 && targetVal < 100
-            ? String(currentVal).padStart(2, '0')
-            : String(currentVal);
-          updated = updated.slice(0, m.index) + formatted + updated.slice(m.index + m[0].length);
-        }
-        el.textContent = updated;
-        if (progress < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    });
-  }, { threshold: 0.25 });
-
-  counterElements.forEach(el => counterObserver.observe(el));
-})();
-
-/* ===== LOGO MOTION: REVOADA DE POMBOS BRANCOS ===== */
-(function initDoveMotion() {
-  if (window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) return;
-
-  const DOVE_SVG = `<svg class="flight-dove" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g class="dove-wing-back"><path d="M 38 28 C 30 15, 20 5, 24 0 C 32 3, 42 12, 48 24 Z" fill="rgba(240,248,245,0.78)"/></g><path class="dove-tail" d="M 28 36 C 18 38, 5 44, 2 40 C 6 35, 16 32, 26 31 Z" fill="#FFFFFF"/><path class="dove-tail-2" d="M 28 36 C 15 42, 6 52, 4 48 C 10 42, 20 36, 27 34 Z" fill="rgba(240,248,245,0.85)"/><path class="dove-body" d="M 26 32 C 34 30, 44 28, 52 26 C 56 22, 62 20, 66 22 C 70 23, 74 27, 72 30 C 68 33, 62 36, 56 40 C 46 45, 36 44, 28 36 Z" fill="#FFFFFF"/><polygon points="71,28 77,29 72,31" fill="#FFC247"/><circle cx="65" cy="24" r="1.3" fill="#173B45"/><path d="M 73 30 Q 77 34 80 38" stroke="#D9FF4E" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M 76 33 Q 79 31 80 34 Q 77 35 76 33 Z" fill="#D9FF4E"/><path d="M 78 37 Q 81 35 81 38 Q 79 39 78 37 Z" fill="#38F29B"/><g class="dove-wing-front"><path d="M 44 32 C 34 16, 22 2, 28 0 C 38 4, 50 16, 56 30 C 52 32, 48 32, 44 32 Z" fill="#FFFFFF"/><path d="M 32 8 C 38 16, 46 24, 48 28" stroke="rgba(23,59,69,0.12)" stroke-width="0.8" fill="none"/></g></svg>`;
-
-  let sky = document.querySelector('.dove-sky');
-  if (!sky) {
-    sky = document.createElement('div');
-    sky.className = 'dove-sky';
-    sky.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(sky);
-  }
-
-  // Função para lançar uma revoada de pombos elegantes
-  function launchFlock(count = 5, options = {}) {
-    if (!sky) return;
-    const isMobile = window.innerWidth <= 768;
-    const actualCount = isMobile ? Math.min(count, 3) : count;
-
-    // Configurações da formação da revoada
-    const flockConfigs = [
-      { scale: isMobile ? 0.75 : 1.05, delay: 0, startX: '-10vw', startY: '75vh', endX: '115vw', endY: '-12vh', opacity: 1, angle: '-18deg', duration: '3.1s' },
-      { scale: isMobile ? 0.55 : 0.78, delay: 0.18, startX: '-15vw', startY: '82vh', endX: '112vw', endY: '-6vh', opacity: 0.88, angle: '-16deg', duration: '3.4s' },
-      { scale: isMobile ? 0.5 : 0.68, delay: 0.32, startX: '-18vw', startY: '70vh', endX: '118vw', endY: '-18vh', opacity: 0.82, angle: '-20deg', duration: '3.2s' },
-      { scale: 0.52, delay: 0.48, startX: '-22vw', startY: '88vh', endX: '110vw', endY: '2vh', opacity: 0.7, angle: '-15deg', duration: '3.6s' },
-      { scale: 0.44, delay: 0.62, startX: '-25vw', startY: '76vh', endX: '114vw', endY: '-14vh', opacity: 0.65, angle: '-19deg', duration: '3.5s' },
-      { scale: 0.38, delay: 0.75, startX: '-28vw', startY: '64vh', endX: '120vw', endY: '-22vh', opacity: 0.55, angle: '-22deg', duration: '3.7s' }
-    ];
-
-    const chosen = flockConfigs.slice(0, actualCount);
-
-    chosen.forEach(cfg => {
-      const doveEl = document.createElement('div');
-      doveEl.className = 'dove-entity';
-      doveEl.innerHTML = DOVE_SVG;
-
-      const size = 70;
-      doveEl.style.width = `${size}px`;
-      doveEl.style.height = `${size * 0.75}px`;
-      doveEl.style.setProperty('--scale', cfg.scale);
-      doveEl.style.setProperty('--delay', `${cfg.delay}s`);
-      doveEl.style.setProperty('--duration', cfg.duration);
-      doveEl.style.setProperty('--start-x', options.fromLogo ? '15vw' : cfg.startX);
-      doveEl.style.setProperty('--start-y', options.fromLogo ? '12vh' : cfg.startY);
-      doveEl.style.setProperty('--end-x', cfg.endX);
-      doveEl.style.setProperty('--end-y', cfg.endY);
-      doveEl.style.setProperty('--target-opacity', cfg.opacity);
-      doveEl.style.setProperty('--angle', cfg.angle);
-
-      sky.appendChild(doveEl);
-
-      // Inicia o voo
-      requestAnimationFrame(() => {
-        doveEl.classList.add('flying');
-      });
-
-      // Remove do DOM após o voo
-      const totalMs = (parseFloat(cfg.duration) + cfg.delay + 0.5) * 1000;
-      setTimeout(() => {
-        doveEl.remove();
-      }, totalMs);
-    });
-  }
-
-  // 1. Revoada suave na chegada à página (Page Arrival)
-  setTimeout(() => {
-    launchFlock(window.innerWidth <= 768 ? 3 : 5);
-  }, 400);
-
-  // 2. Voo suave entre páginas (ao clicar nos links de navegação internos)
-  document.addEventListener('click', event => {
-    const link = event.target.closest('a[href]');
-    if (!link) return;
-    const href = link.getAttribute('href');
-    // Apenas links internos do site
-    if (href && !href.startsWith('http') && !href.startsWith('mailto') && !href.startsWith('tel') && !href.startsWith('#') && !href.includes('wa.me')) {
-      launchFlock(3);
-    }
-  });
-
-  // 3. Efeito Interativo no Logo: passar o mouse ou clicar solta uma revoada
-  const logos = document.querySelectorAll('.brand, .logo-lockup');
-  logos.forEach(logo => {
-    logo.style.cursor = 'pointer';
-    let lastLaunch = 0;
-    const trigger = (e) => {
-      const now = Date.now();
-      if (now - lastLaunch < 2500) return; // cooldown de 2.5s
-      lastLaunch = now;
-      launchFlock(4, { fromLogo: true });
-    };
-    logo.addEventListener('click', trigger);
-  });
-
-  // 4. Voo ambiental periódico e sutil (a cada 28s)
-  setInterval(() => {
-    if (document.visibilityState === 'visible') {
-      launchFlock(2, { scale: 0.6 });
-    }
-  }, 28000);
-
-  // Expõe no window para testes
-  window.launchDoveMotion = launchFlock;
-})();
