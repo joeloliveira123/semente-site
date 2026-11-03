@@ -1459,79 +1459,192 @@ summary span {
   font-weight: 600;
 }
 
-/* ===== Contato & Redes Sociais ===== */
+/* ===== Contato & Redes Sociais (Layout Espaçoso & Visual Prominente) ===== */
 .content-section {
   max-width: var(--max);
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 0.75fr 1.25fr;
-  gap: 60px;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  width: 100%;
 }
 
 .content-intro {
-  max-width: 500px;
+  max-width: 780px;
 }
 
 .content-links {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
   width: 100%;
+  box-sizing: border-box;
 }
 
-@media (min-width: 1120px) {
+@media (min-width: 1080px) {
   .content-links {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
 .content-link {
-  min-height: 135px;
+  min-height: 140px;
   border-radius: var(--radius);
-  padding: 22px;
+  padding: 24px;
   display: grid;
-  grid-template-columns: 44px 1fr 20px;
+  grid-template-columns: 48px 1fr 20px;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   color: var(--white);
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.018) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.32s ease,
+              box-shadow 0.32s ease,
+              background 0.32s ease;
 }
 
 .content-link:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 28px rgba(217, 255, 78, 0.15);
 }
 
+.content-link:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+/* Identidades Específicas com Destaque para TV Semente e Instagram */
 .content-link.youtube {
-  background: #C4302B;
+  border-left: 3px solid #FF0000 !important;
+}
+.content-link.youtube:hover {
+  border-color: rgba(255, 0, 0, 0.5) !important;
 }
 
 .content-link.instagram {
-  background: #9D2D6A;
+  border-left: 3px solid #E1306C !important;
+}
+.content-link.instagram:hover {
+  border-color: rgba(225, 48, 108, 0.55) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(225, 48, 108, 0.25) !important;
 }
 
 .content-link.facebook {
-  background: #18529D;
+  border-left: 3px solid #1877F2 !important;
+}
+.content-link.facebook:hover {
+  border-color: rgba(24, 119, 242, 0.55) !important;
 }
 
+/* Destaque Nobre para TV Semente: Ao Vivo 24h & Presença Marcante */
 .content-link.tv {
-  background: var(--forest);
+  background: linear-gradient(145deg, rgba(212, 157, 66, 0.14) 0%, rgba(30, 63, 51, 0.6) 100%) !important;
+  border: 1px solid rgba(212, 157, 66, 0.45) !important;
+  border-left: 3px solid #D49D42 !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(212, 157, 66, 0.18) !important;
+}
+
+.content-link.tv:hover {
+  border-color: rgba(212, 157, 66, 0.75) !important;
+  background: linear-gradient(145deg, rgba(212, 157, 66, 0.22) 0%, rgba(30, 63, 51, 0.75) 100%) !important;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.65), 0 0 36px rgba(212, 157, 66, 0.35) !important;
 }
 
 .content-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: grid;
   place-items: center;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), background 0.28s ease;
+}
+
+.content-link:hover .content-icon {
+  transform: scale(1.08);
+}
+
+.content-link.instagram .content-icon {
+  background: linear-gradient(135deg, rgba(225, 48, 108, 0.18), rgba(131, 58, 180, 0.18));
+  border-color: rgba(225, 48, 108, 0.4);
+  color: #FD1D1D;
+}
+
+.content-link.tv .content-icon {
+  background: rgba(212, 157, 66, 0.22);
+  border-color: rgba(212, 157, 66, 0.5);
+  color: #D49D42;
+  box-shadow: 0 0 15px rgba(212, 157, 66, 0.25);
+}
+
+.content-link.youtube .content-icon {
+  background: rgba(255, 0, 0, 0.16);
+  border-color: rgba(255, 0, 0, 0.35);
+  color: #FF3333;
+}
+
+.content-link.facebook .content-icon {
+  background: rgba(24, 119, 242, 0.16);
+  border-color: rgba(24, 119, 242, 0.35);
+  color: #3B82F6;
 }
 
 .content-icon svg {
-  width: 22px;
-  height: 22px;
-  fill: currentColor;
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+/* Tag 'Ao Vivo 24h' com pulso de transmissão */
+.tv-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #D49D42 !important;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  font-size: 10px;
+}
+
+.tv-badge::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #E53935;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #E53935;
+  animation: tvSignalPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes tvSignalPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+/* Motion Design: Antena da TV com suave sinal de transmissão no hover */
+.content-link.tv:hover .icon-tv svg {
+  animation: tvAntennaWiggle 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes tvAntennaWiggle {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg) scale(1.05); }
+  50% { transform: rotate(5deg) scale(1.05); }
+  75% { transform: rotate(-2deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Motion Design: Ícone do Instagram dá um sutil zoom fotográfico no hover */
+.content-link.instagram:hover .icon-instagram svg {
+  transform: scale(1.12);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .content-link small {
