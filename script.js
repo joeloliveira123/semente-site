@@ -249,7 +249,19 @@ function eventImageUrl(imagePath) {
   return imagePath;
 }
 
-const localEvents = [];
+const localEvents = [
+  {
+    id: 'cantata-de-natal-2026',
+    title: 'Cantata de Natal',
+    description: 'Uma noite de louvor, música e esperança. Venha celebrar o Natal conosco! Venha com a família e traga seus amigos!',
+    starts_at: '2026-12-20T18:00:00-03:00',
+    location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
+    video_url: 'assets/cantata-de-natal.mp4',
+    poster: 'assets/cantata-de-natal-poster.jpg',
+    image_path: 'local:assets/cantata-de-natal-poster.jpg',
+    link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP'
+  }
+];
 
 function renderEvents(events) {
   const section = document.querySelector('#eventos');
@@ -266,16 +278,19 @@ function renderEvents(events) {
     const time = new Intl.DateTimeFormat('pt-BR', {hour:'2-digit', minute:'2-digit', timeZone:'America/Sao_Paulo'}).format(start).replace(':00', 'h');
     const date = `${day} · ${time}`;
     const image = eventImageUrl(event.image_path);
-    const media = image ? `<img src="${escapeHtml(image)}" alt="Arte do evento ${escapeHtml(event.title)}" loading="lazy">` : '<div class="event-placeholder" aria-hidden="true">Semente</div>';
-    const action = event.link_url ? `<a href="${escapeHtml(event.link_url)}" target="_blank" rel="noreferrer">Ver detalhes →</a>` : '';
-    const womenClass = /mulheres/i.test(event.title) ? ' event-card-women' : '';
-    if (womenClass) {
-      const location = event.location ? `<p class="event-location">${escapeHtml(event.location)}</p>` : '';
-      return `<article class="event-card">${media}<div class="event-card-body"><span class="event-date">${escapeHtml(date)}</span><h3>${escapeHtml(event.title)}</h3>${event.description ? `<p class="event-quote">${escapeHtml(event.description)}</p>` : ''}${location}${action}</div></article>`;
+    let media;
+    if (event.video_url) {
+      media = `<div class="event-media event-media-video"><video class="event-video" src="${escapeHtml(event.video_url)}" poster="${escapeHtml(event.poster || '')}" controls playsinline preload="metadata"></video></div>`;
+    } else if (image) {
+      media = `<img src="${escapeHtml(image)}" alt="Arte do evento ${escapeHtml(event.title)}" loading="lazy">`;
+    } else {
+      media = '<div class="event-placeholder" aria-hidden="true">Semente</div>';
     }
+    const when = `<div class="event-detail"><span>Quando</span><p>${escapeHtml(date)}</p></div>`;
     const location = event.location ? `<div class="event-detail"><span>Onde</span><p>${escapeHtml(event.location)}</p></div>` : '';
-    const description = event.description ? `<div class="event-detail"><span>Detalhes</span><p>${escapeHtml(event.description)}</p></div>` : '';
-    return `<article class="event-card">${media}<div class="event-card-body"><span class="event-date">${escapeHtml(date)}</span><h3>${escapeHtml(event.title)}</h3>${location}${description}${action}</div></article>`;
+    const action = event.link_url ? `<a class="event-action-link" href="${escapeHtml(event.link_url)}" target="_blank" rel="noreferrer">Ver no mapa →</a>` : '';
+    const quote = event.description ? `<p class="event-quote">${escapeHtml(event.description)}</p>` : '';
+    return `<article class="event-card reveal">${media}<div class="event-card-body"><span class="event-date">${escapeHtml(date)}</span><h3>${escapeHtml(event.title)}</h3>${quote}${when}${location}${action}</div></article>`;
   }).join('');
   section.hidden = false;
   section.querySelectorAll('.reveal').forEach(element => observer.observe(element));
