@@ -1,3 +1,4 @@
 # Teamwork internal artifacts
 .agents/
 scratch/
+node_modules/
