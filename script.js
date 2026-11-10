@@ -251,6 +251,15 @@ function eventImageUrl(imagePath) {
 
 const localEvents = [
   {
+    id: 'culto-de-missoes-2026',
+    title: 'Culto de Missões',
+    description: 'Brasil e Angola unidos pelo Evangelho. Duas nações, uma só família. «Ide, portanto, e fazei discípulos de todas as nações.» Venha semear conosco!',
+    starts_at: '2026-11-29T18:30:00-03:00',
+    location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
+    animation: 'culto-missoes',
+    link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP'
+  },
+  {
     id: 'cantata-de-natal-2026',
     title: 'Cantata de Natal',
     description: 'Uma noite de louvor, música e esperança. Venha celebrar o Natal conosco! Traga sua família e amigos!',
@@ -277,7 +286,41 @@ function renderEvents(events) {
     const date = `${day} · ${time}`;
     const image = eventImageUrl(event.image_path);
     let media;
-    if (event.animation === 'cantata-natal' || event.id === 'cantata-de-natal-2026') {
+    if (event.animation === 'culto-missoes' || event.id === 'culto-de-missoes-2026') {
+      media = `
+        <div class="event-media event-media-missoes" aria-label="Animação visual do Culto de Missões">
+          <div class="missoes-anim-stage" data-missoes-stage title="Clique para tela cheia">
+            <div class="missoes-blob missoes-b1" aria-hidden="true"></div>
+            <div class="missoes-blob missoes-b2" aria-hidden="true"></div>
+            <div class="missoes-blob missoes-b3" aria-hidden="true"></div>
+            <div class="missoes-veil" aria-hidden="true"></div>
+            <div class="missoes-scene on">
+              <img class="missoes-logo" alt="Missão Semente" src="assets/logo-missao-semente.png">
+              <div class="missoes-big">Culto de Missões</div>
+            </div>
+            <div class="missoes-scene">
+              <div class="missoes-mid">Brasil <em>+</em> Angola</div>
+              <div class="missoes-line" aria-hidden="true"></div>
+              <div class="missoes-small">Unidos pelo Evangelho</div>
+            </div>
+            <div class="missoes-scene">
+              <div class="missoes-small">Mateus 28:19</div>
+              <div class="missoes-line" aria-hidden="true"></div>
+              <div class="missoes-mid">«Ide, portanto, e fazei discípulos de <em>todas as nações</em>.»</div>
+            </div>
+            <div class="missoes-scene">
+              <div class="missoes-small">Missionários de Angola</div>
+              <div class="missoes-mid">Duas nações,<br><em>uma só família</em></div>
+              <div class="missoes-hello" aria-hidden="true"><span>Bem-vindos</span><span>Karibu</span><span>Bienvenue</span><span>Welcome</span></div>
+            </div>
+            <div class="missoes-scene">
+              <img class="missoes-logo missoes-logo-sm" alt="Missão Semente" src="assets/logo-missao-semente.png">
+              <div class="missoes-mid">Venha <em>semear</em> conosco!</div>
+              <div class="missoes-txt">Domingo, 29 de novembro · 18h30 · Igreja Vila Antonieta</div>
+            </div>
+          </div>
+        </div>`;
+    } else if (event.animation === 'cantata-natal' || event.id === 'cantata-de-natal-2026') {
       media = `
         <div class="event-media event-media-anim" aria-label="Animação visual da Cantata de Natal">
           <div class="cantata-anim-stage" data-cantata-stage>
@@ -324,8 +367,50 @@ function renderEvents(events) {
   }).join('');
   section.hidden = false;
   section.querySelectorAll('.reveal').forEach(element => observer.observe(element));
+  section.querySelectorAll('[data-missoes-stage]').forEach(stage => {
+    initMissoesAnimation(stage);
+  });
   section.querySelectorAll('[data-cantata-stage]').forEach(stage => {
     initCantataAnimation(stage);
+  });
+}
+
+function initMissoesAnimation(stage) {
+  if (!stage || stage.dataset.animInitialized) return;
+  stage.dataset.animInitialized = 'true';
+  const sc = [].slice.call(stage.querySelectorAll('.missoes-scene'));
+  if (!sc.length) return;
+  const SECONDS = 6;
+  let i = 0;
+  let tm;
+  function go(n) {
+    clearTimeout(tm);
+    const p = i;
+    if (p >= 0 && sc[p] && p !== n % sc.length) {
+      sc[p].classList.add('out');
+      sc[p].classList.remove('on');
+      setTimeout(() => {
+        if (sc[p]) sc[p].classList.remove('out');
+      }, 850);
+    }
+    i = n % sc.length;
+    if (sc[i]) sc[i].classList.add('on');
+    tm = setTimeout(() => {
+      go(i + 1);
+    }, SECONDS * 1000);
+  }
+  tm = setTimeout(() => {
+    go(1);
+  }, SECONDS * 1000);
+
+  stage.addEventListener('click', () => {
+    try {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        stage.requestFullscreen();
+      }
+    } catch (e) {}
   });
 }
 

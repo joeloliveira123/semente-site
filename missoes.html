@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Culto de Missões — Brasil + Angola</title>
+<link rel="icon" type="image/png" href="assets/logo-missao-semente.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..800&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#f2b705;--cream:#f5efe3;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#030504;overflow:hidden}
+#wrap{position:fixed;inset:0;display:grid;place-items:center}
+#stage{position:relative;width:min(100vw,177.78vh);aspect-ratio:16/9;overflow:hidden;background:#050806;font-family:'Fraunces','Georgia',serif;color:var(--cream);container-type:size;cursor:pointer}
+.blob{position:absolute;width:55%;aspect-ratio:1;border-radius:50%;filter:blur(10cqw);opacity:.35;animation:drift 20s ease-in-out infinite alternate}
+.b1{background:#0b8a3e;left:-15%;top:-30%}
+.b2{background:#12307a;right:-15%;bottom:-35%;animation-delay:-6s;opacity:.5}
+.b3{background:#f2b705;right:10%;top:-50%;animation-delay:-10s;opacity:.18}
+@keyframes drift{to{transform:translate(8cqw,6cqh) scale(1.2) rotate(40deg)}}
+.veil{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,0,0,.3),rgba(0,0,0,.88))}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 8cqw;opacity:0;transition:opacity 1s;z-index:3}
+.scene.on{opacity:1}
+.scene>*{opacity:0;transform:translateY(3cqh);transition:opacity .9s,transform .9s}
+.scene.on>*{opacity:1;transform:none}
+.scene.on>:nth-child(2){transition-delay:.5s}.scene.on>:nth-child(3){transition-delay:1s}
+.small{font-size:2.2cqw;letter-spacing:.45em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.big{font-size:9cqw;line-height:1.02;font-weight:800}
+.mid{font-size:5.4cqw;line-height:1.15;font-weight:700}
+.txt{font-size:2.8cqw;margin-top:2.5cqh;max-width:70cqw;line-height:1.35;opacity:.85}
+em{color:var(--gold);font-style:italic}
+.logo{width:24cqh;margin-bottom:3cqh}
+.line{width:8cqw;height:2px;background:var(--gold);margin:3cqh 0}
+.hello{display:flex;gap:3.5cqw;margin-top:4cqh;font-size:3cqw;font-weight:600;color:var(--gold)}
+.hello span{animation:pop 4s ease-in-out infinite}.hello span:nth-child(2){animation-delay:.6s}.hello span:nth-child(3){animation-delay:1.2s}.hello span:nth-child(4){animation-delay:1.8s}
+@keyframes pop{50%{color:#fff}}
+.fullscreen-hint{position:fixed;bottom:16px;right:16px;font-family:sans-serif;font-size:12px;color:rgba(255,255,255,.4);pointer-events:none;z-index:10;text-transform:uppercase;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage" title="Clique para tela cheia">
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div class="veil"></div>
+
+<div class="scene">
+<img class="logo" alt="Missão Semente" src="assets/logo-missao-semente.png">
+<div class="big">Culto de Missões</div>
+</div>
+
+<div class="scene">
+<div class="mid">Brasil <em>+</em> Angola</div>
+<div class="line"></div>
+<div class="small">Unidos pelo Evangelho</div>
+</div>
+
+<div class="scene">
+<div class="small">Mateus 28:19</div>
+<div class="line"></div>
+<div class="mid">«Ide, portanto, e fazei discípulos de <em>todas as nações</em>.»</div>
+</div>
+
+<div class="scene">
+<div class="small">Missionários de Angola</div>
+<div class="mid">Duas nações,<br><em>uma só família</em></div>
+<div class="hello"><span>Bem-vindos</span><span>Karibu</span><span>Bienvenue</span><span>Welcome</span></div>
+</div>
+
+<div class="scene">
+<img class="logo" style="width:14cqh;margin-bottom:2cqh" alt="Missão Semente" src="assets/logo-missao-semente.png">
+<div class="mid">Venha <em>semear</em> conosco!</div>
+<div class="txt" id="info"></div>
+</div>
+</div></div>
+<div class="fullscreen-hint">Clique para tela cheia ⛶</div>
+<script>
+const INFO = "Domingo, 29 de novembro · 18h30 · Igreja Vila Antonieta";
+const SECONDS = 6;
+document.getElementById('info').textContent = INFO;
+const sc=[...document.querySelectorAll('.scene')];
+let i=0;
+const show=n=>sc.forEach((s,k)=>s.classList.toggle('on',k===n));
+show(0);
+setInterval(()=>{i=(i+1)%sc.length;show(i)},SECONDS*1000);
+document.getElementById('stage').addEventListener('click',()=>{
+  try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}
+});
+</script>
+</body>
+</html>
