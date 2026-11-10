@@ -253,12 +253,10 @@ const localEvents = [
   {
     id: 'cantata-de-natal-2026',
     title: 'Cantata de Natal',
-    description: 'Uma noite de louvor, música e esperança. Venha celebrar o Natal conosco! Venha com a família e traga seus amigos!',
-    starts_at: '2026-12-20T18:00:00-03:00',
+    description: 'Uma noite de louvor, música e esperança. Venha celebrar o Natal conosco! Traga sua família e amigos!',
+    starts_at: '2026-12-20T18:30:00-03:00',
     location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
-    video_url: 'assets/cantata-de-natal.mp4',
-    poster: 'assets/cantata-de-natal-poster.jpg',
-    image_path: 'local:assets/cantata-de-natal-poster.jpg',
+    animation: 'cantata-natal',
     link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP'
   }
 ];
@@ -279,7 +277,39 @@ function renderEvents(events) {
     const date = `${day} · ${time}`;
     const image = eventImageUrl(event.image_path);
     let media;
-    if (event.video_url) {
+    if (event.animation === 'cantata-natal' || event.id === 'cantata-de-natal-2026') {
+      media = `
+        <div class="event-media event-media-anim" aria-label="Animação visual da Cantata de Natal">
+          <div class="cantata-anim-stage" data-cantata-stage>
+            <div class="cantata-arch" aria-hidden="true"></div>
+            <div class="cantata-stars" aria-hidden="true"></div>
+            <div class="cantata-scene on">
+              <h4 class="cantata-title">Cantata<br>de Natal</h4>
+              <div class="cantata-rule" aria-hidden="true"></div>
+            </div>
+            <div class="cantata-scene">
+              <div class="cantata-kicker">Quando</div>
+              <div class="cantata-big" style="margin-top:3cqw">20 de Dezembro</div>
+              <div class="cantata-rule" aria-hidden="true"></div>
+              <div class="cantata-big" style="font-size:16cqw">18h30</div>
+            </div>
+            <div class="cantata-scene">
+              <div class="cantata-kicker">Onde</div>
+              <div class="cantata-rule" aria-hidden="true"></div>
+              <div class="cantata-big" style="font-size:9cqw">Rua Júlio Parigot, 228</div>
+            </div>
+            <div class="cantata-scene">
+              <div class="cantata-it" style="font-size:9cqw">Venha celebrar o Natal conosco!</div>
+              <div class="cantata-rule" aria-hidden="true"></div>
+              <div class="cantata-it" style="font-size:5cqw">Traga sua família e amigos</div>
+            </div>
+            <div class="cantata-scene">
+              <img class="cantata-logo" alt="Logo Missão Semente" src="assets/logo-missao-semente.png">
+              <div class="cantata-it" style="font-size:7cqw">Esperamos você!</div>
+            </div>
+          </div>
+        </div>`;
+    } else if (event.video_url) {
       media = `<div class="event-media event-media-video"><video class="event-video" src="${escapeHtml(event.video_url)}" poster="${escapeHtml(event.poster || '')}" controls playsinline preload="metadata"></video></div>`;
     } else if (image) {
       media = `<img src="${escapeHtml(image)}" alt="Arte do evento ${escapeHtml(event.title)}" loading="lazy">`;
@@ -294,6 +324,51 @@ function renderEvents(events) {
   }).join('');
   section.hidden = false;
   section.querySelectorAll('.reveal').forEach(element => observer.observe(element));
+  section.querySelectorAll('[data-cantata-stage]').forEach(stage => {
+    initCantataAnimation(stage);
+  });
+}
+
+function initCantataAnimation(stage) {
+  if (!stage || stage.dataset.animInitialized) return;
+  stage.dataset.animInitialized = 'true';
+  const sc = [].slice.call(stage.querySelectorAll('.cantata-scene'));
+  if (!sc.length) return;
+  const T = [5500, 7000, 7500, 7000, 7500];
+  let i = 0;
+  let tm;
+  const st = stage.querySelector('.cantata-stars');
+  if (st && !st.children.length) {
+    for (let k = 0; k < 9; k++) {
+      const s = document.createElement('span');
+      s.className = 'cantata-star';
+      s.textContent = '✦';
+      s.style.left = (5 + Math.random() * 90) + '%';
+      s.style.fontSize = (1.6 + Math.random() * 1.6) + 'cqw';
+      s.style.animationDuration = (9 + Math.random() * 7) + 's';
+      s.style.animationDelay = (-Math.random() * 12) + 's';
+      st.appendChild(s);
+    }
+  }
+  function go(n) {
+    clearTimeout(tm);
+    const p = i;
+    if (p >= 0 && sc[p] && p !== n % sc.length) {
+      sc[p].classList.add('out');
+      sc[p].classList.remove('on');
+      setTimeout(() => {
+        if (sc[p]) sc[p].classList.remove('out');
+      }, 900);
+    }
+    i = n % sc.length;
+    if (sc[i]) sc[i].classList.add('on');
+    tm = setTimeout(() => {
+      go(i + 1);
+    }, T[i] + (i === sc.length - 1 ? 800 : 0));
+  }
+  tm = setTimeout(() => {
+    go(1);
+  }, T[0]);
 }
 
 async function loadPublishedEvents() {
