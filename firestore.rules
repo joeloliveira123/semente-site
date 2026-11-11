@@ -2,32 +2,19 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Nega tudo por padrão (Default Deny / Princípio do Menor Privilégio)
-    match /{document=**} {
-      allow read, write: if false;
-    }
-
-    // Configurações gerais (status manual de transmissão ao vivo e banners)
+    // Configurações gerais (status de transmissão ao vivo e banners)
     match /config/{configId} {
       allow read, write: if true;
     }
 
-    // Coleção de eventos: leitura pública e gestão
+    // Coleção de eventos especiais e avisos da igreja
     match /events/{eventId} {
-      allow read: if true;
-      allow write: if true;
+      allow read, write: if true;
     }
 
-    // Coleção de pedidos de oração:
-    // Criação pública validada e gestão pelos pastores no painel
+    // Coleção de pedidos de oração enviados pelo site e geridos no painel
     match /prayer_requests/{requestId} {
-      allow create: if request.resource.data.name is string
-                    && request.resource.data.name.size() > 0
-                    && request.resource.data.name.size() <= 120
-                    && request.resource.data.reason is string
-                    && request.resource.data.reason.size() > 0
-                    && request.resource.data.reason.size() <= 4000;
-      allow read, update, delete: if true;
+      allow read, write: if true;
     }
   }
 }

@@ -488,19 +488,22 @@ async function loadPublishedEvents() {
 
   if (window.db) {
     try {
-      const snapshot = await window.db.collection('events').get();
-      if (!snapshot.empty) {
-        const remoteEvents = [];
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          if (data.published !== false && data.is_published !== false) {
-            remoteEvents.push({ id: doc.id, ...data });
+      window.db.collection('events').onSnapshot(snapshot => {
+        if (!snapshot.empty) {
+          const remoteEvents = [];
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.published !== false && data.is_published !== false) {
+              remoteEvents.push({ id: doc.id, ...data });
+            }
+          });
+          if (remoteEvents.length > 0) {
+            renderEvents(remoteEvents);
           }
-        });
-        if (remoteEvents.length > 0) {
-          events = remoteEvents;
         }
-      }
+      }, err => {
+        console.warn('Usando eventos locais/cache:', err);
+      });
     } catch (error) {
       console.warn('Usando eventos locais:', error);
     }
@@ -510,6 +513,15 @@ async function loadPublishedEvents() {
 }
 
 loadPublishedEvents();
+
+window.addEventListener('storage', (e) => {
+  if (e.key === 'semente_pastoral_events') {
+    loadPublishedEvents();
+  }
+});
+window.addEventListener('semente:events_update', () => {
+  loadPublishedEvents();
+});
 
 
 /* ===== Playlists do mês e pedido de oração ===== */
@@ -551,6 +563,7 @@ const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
       email: data.email.trim() || null,
       congregation: data.congregacao || null,
       reason: data.motivo.trim(),
+      status: 'novo',
       created_at: new Date().toISOString()
     };
     const jobs = [
@@ -571,6 +584,14 @@ const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
     if (window.db) {
       jobs.push(window.db.collection('prayer_requests').add(payload));
     }
+    // Salva no cache local para o painel pastoral atualizar em tempo real
+    try {
+      const cached = localStorage.getItem('semente_pastoral_prayers_cache');
+      const list = cached ? JSON.parse(cached) : [];
+      list.unshift({ id: 'local-' + Date.now(), ...payload });
+      localStorage.setItem('semente_pastoral_prayers_cache', JSON.stringify(list));
+      window.dispatchEvent(new CustomEvent('semente:prayer_submitted', { detail: payload }));
+    } catch(e) {}
     const results = await Promise.allSettled(jobs);
     button.disabled = false;
     if (results.some(r => r.status === 'fulfilled')) {
@@ -837,4 +858,9 @@ const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
 
   updateLiveBanner();
   setInterval(updateLiveBanner, 30000);
+
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'semente_manual_live') updateLiveBanner();
+  });
+  window.addEventListener('semente:live_update', updateLiveBanner);
 })();

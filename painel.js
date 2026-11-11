@@ -1,18 +1,19 @@
 // ==========================================================================
 // PAINEL DE GESTÃO PASTORAL · IGREJA EVANGÉLICA SEMENTE DA MULTIPLICAÇÃO
+// Integração Real com Firebase Firestore & Sincronização em Tempo Real
 // ==========================================================================
 
 (function initPainel() {
   'use strict';
 
-  // Chaves de Armazenamento e Constantes
+  // Chaves de Armazenamento Local
   const AUTH_KEY = 'semente_pastoral_auth';
   const LIVE_KEY = 'semente_manual_live';
   const EVENTS_KEY = 'semente_pastoral_events';
   const PRAYERS_KEY = 'semente_pastoral_prayers_cache';
   const DEFAULT_PIN = '1997'; // Ano de fundação da Igreja
 
-  // Elementos da Interface
+  // Elementos da Interface Geral
   const lockScreen = document.getElementById('painel-lock');
   const dashboard = document.getElementById('painel-dashboard');
   const btnLogout = document.getElementById('btn-logout');
@@ -21,7 +22,24 @@
   const pinError = document.getElementById('pin-error');
   const keypad = document.getElementById('pin-keypad');
 
-  // Abas
+  // Badge e Alerta do Firebase
+  const firebaseBadge = document.getElementById('firebase-status-badge');
+  const firebaseBadgeText = document.getElementById('firebase-badge-text');
+  const firebaseRulesAlert = document.getElementById('firebase-rules-alert');
+  const btnShowRules = document.getElementById('btn-show-rules');
+  const rulesModal = document.getElementById('rules-modal');
+  const btnCloseRules = document.getElementById('btn-close-rules');
+  const btnCopyRules = document.getElementById('btn-copy-rules');
+  const rulesCode = document.getElementById('rules-code');
+
+  // Modal de Pedido Manual
+  const prayerModal = document.getElementById('prayer-modal');
+  const btnOpenPrayerModal = document.getElementById('btn-open-prayer-modal');
+  const btnClosePrayerModal = document.getElementById('btn-close-prayer-modal');
+  const btnCancelPrayerModal = document.getElementById('btn-cancel-prayer-modal');
+  const manualPrayerForm = document.getElementById('manual-prayer-form');
+
+  // Abas do Painel
   const navTabs = document.querySelectorAll('.nav-tab');
   const tabSections = document.querySelectorAll('.dashboard-tab');
 
@@ -49,12 +67,99 @@
   const btnCancelEvent = document.getElementById('btn-cancel-event');
   const eventsList = document.getElementById('events-list');
 
-  // Estados em memória
+  // Estados em memória (SEM DADOS FICTÍCIOS / MOCKS)
   let prayerRequestsData = [];
   let eventsData = [];
+  let firebaseStatus = 'checking'; // 'connected' | 'rules_denied' | 'offline'
+
+  // Eventos reais oficiais da Igreja Semente da Multiplicação
+  const REAL_INITIAL_EVENTS = [
+    {
+      id: 'culto-de-missoes-2026',
+      title: 'Culto de Missões',
+      congregation: 'Vila Antonieta',
+      date: '29 de Novembro · 18h30',
+      location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
+      description: 'Brasil e Angola unidos pelo Evangelho. Duas nações, uma só família. «Ide, portanto, e fazei discípulos de todas as nações.»',
+      published: true
+    },
+    {
+      id: 'cantata-de-natal-2026',
+      title: 'Cantata de Natal',
+      congregation: 'Vila Antonieta',
+      date: '20 de Dezembro · 18h30',
+      location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
+      description: 'Uma noite de louvor, música e esperança. Venha celebrar o Natal conosco! Traga sua família e amigos.',
+      published: true
+    },
+    {
+      id: 'santa-ceia-mensal',
+      title: 'Culto de Santa Ceia do Senhor',
+      congregation: 'Ambas as congregações',
+      date: '1º Domingo de cada mês · 9h30 (Sapopemba) e 18h30 (Antonieta)',
+      location: 'Jardim Sapopemba (manhã) e Vila Antonieta (noite)',
+      description: 'Celebração da comunhão e renovação de aliança com Deus e com a igreja através do pão e do cálice.',
+      published: true
+    }
+  ];
 
   // ========================================================================
-  // 1. AUTENTICAÇÃO E BLOQUEIO POR PIN
+  // 1. GERENCIADOR DO STATUS DO FIREBASE
+  // ========================================================================
+  function setFirebaseStatus(status) {
+    firebaseStatus = status;
+    if (!firebaseBadge) return;
+
+    firebaseBadge.className = 'firebase-badge';
+    if (status === 'connected') {
+      firebaseBadge.classList.add('status-connected');
+      if (firebaseBadgeText) firebaseBadgeText.textContent = 'Firebase Online 🟢';
+      if (firebaseRulesAlert) firebaseRulesAlert.style.display = 'none';
+    } else if (status === 'rules_denied') {
+      firebaseBadge.classList.add('status-rules-pending');
+      if (firebaseBadgeText) firebaseBadgeText.textContent = 'Regras 403 🟡';
+      if (firebaseRulesAlert) firebaseRulesAlert.style.display = 'flex';
+    } else {
+      firebaseBadge.classList.add('status-offline');
+      if (firebaseBadgeText) firebaseBadgeText.textContent = 'Modo Local 🔵';
+      if (firebaseRulesAlert) firebaseRulesAlert.style.display = 'none';
+    }
+  }
+
+  // Modais de Regras e Pedido Manual
+  if (btnShowRules && rulesModal) {
+    btnShowRules.addEventListener('click', () => {
+      rulesModal.style.display = 'flex';
+    });
+  }
+  if (btnCloseRules && rulesModal) {
+    btnCloseRules.addEventListener('click', () => {
+      rulesModal.style.display = 'none';
+    });
+  }
+  if (rulesModal) {
+    rulesModal.addEventListener('click', (e) => {
+      if (e.target === rulesModal) rulesModal.style.display = 'none';
+    });
+  }
+  if (btnCopyRules && rulesCode) {
+    btnCopyRules.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(rulesCode.innerText.trim());
+        btnCopyRules.textContent = 'Regras Copiadas! ✓';
+        btnCopyRules.style.background = '#2e7d32';
+        setTimeout(() => {
+          btnCopyRules.textContent = 'Copiar Regras 📋';
+          btnCopyRules.style.background = '';
+        }, 3000);
+      } catch (err) {
+        alert('Copie o código manualmente na caixa de texto.');
+      }
+    });
+  }
+
+  // ========================================================================
+  // 2. AUTENTICAÇÃO E BLOQUEIO POR PIN
   // ========================================================================
   function checkAuth() {
     const isAuth = sessionStorage.getItem(AUTH_KEY) === 'true';
@@ -121,7 +226,7 @@
   }
 
   // ========================================================================
-  // 2. NAVEGAÇÃO ENTRE ABAS
+  // 3. NAVEGAÇÃO ENTRE ABAS
   // ========================================================================
   navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
@@ -136,76 +241,68 @@
   });
 
   // ========================================================================
-  // 3. ABA 1: PEDIDOS DE ORAÇÃO
+  // 4. ABA 1: PEDIDOS DE ORAÇÃO (DADOS REAIS)
   // ========================================================================
-  const MOCK_PRAYERS = [
-    {
-      id: 'demo-1',
-      name: 'Maria Eduarda Santos',
-      email: 'maria.santos@exemplo.com',
-      congregation: 'Jardim Sapopemba',
-      reason: 'Peço oração pela restauração da saúde da minha mãe e pela conversão de meu esposo para Cristo.',
-      created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
-      status: 'novo'
-    },
-    {
-      id: 'demo-2',
-      name: 'Carlos Alberto de Oliveira',
-      email: '',
-      congregation: 'Vila Antonieta',
-      reason: 'Orar por uma porta de emprego aberta nesta semana e pela paz no meu lar.',
-      created_at: new Date(Date.now() - 3600000 * 26).toISOString(),
-      status: 'em_oracao'
-    },
-    {
-      id: 'demo-3',
-      name: 'Fernanda Lima',
-      email: 'fernanda.lima@exemplo.com',
-      congregation: 'Ainda não frequento',
-      reason: 'Assisti à Live de Oração da manhã pela primeira vez. Preciso de força contra a ansiedade.',
-      created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
-      status: 'atendido'
-    }
-  ];
+  function loadLocalPrayersCache() {
+    try {
+      const cached = localStorage.getItem(PRAYERS_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) {
+          // Filtra itens fictícios que possam ter ficado em cache antigo
+          return parsed.filter(item => !String(item.id).startsWith('demo-'));
+        }
+      }
+    } catch(e) {}
+    return [];
+  }
+
+  function saveLocalPrayersCache(list) {
+    try {
+      localStorage.setItem(PRAYERS_KEY, JSON.stringify(list));
+    } catch(e) {}
+  }
 
   function loadPrayerRequests() {
     prayersList.innerHTML = '<p class="loading-state">Buscando pedidos de oração...</p>';
 
+    // Se Firebase estiver disponível
     if (window.db) {
       try {
         window.db.collection('prayer_requests')
           .orderBy('created_at', 'desc')
           .onSnapshot(snapshot => {
+            setFirebaseStatus('connected');
             if (snapshot.empty) {
-              // Se a coleção estiver vazia, carrega dados em cache ou dados modelo
-              const cached = localStorage.getItem(PRAYERS_KEY);
-              prayerRequestsData = cached ? JSON.parse(cached) : MOCK_PRAYERS;
+              // Coleção está vazia no Firebase: carregar cache local real
+              prayerRequestsData = loadLocalPrayersCache();
             } else {
               prayerRequestsData = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data(),
                 status: doc.data().status || 'novo'
               }));
-              try {
-                localStorage.setItem(PRAYERS_KEY, JSON.stringify(prayerRequestsData));
-              } catch(e) {}
+              saveLocalPrayersCache(prayerRequestsData);
             }
             renderPrayerRequests();
           }, err => {
-            console.warn('Erro ao ler Firestore (usando cache local):', err);
-            const cached = localStorage.getItem(PRAYERS_KEY);
-            prayerRequestsData = cached ? JSON.parse(cached) : MOCK_PRAYERS;
+            console.warn('Erro ao ler Firestore:', err);
+            if (err && (err.code === 'permission-denied' || String(err).includes('permission'))) {
+              setFirebaseStatus('rules_denied');
+            } else {
+              setFirebaseStatus('offline');
+            }
+            prayerRequestsData = loadLocalPrayersCache();
             renderPrayerRequests();
           });
         return;
       } catch (err) {
-        console.warn('Falha na consulta Firestore:', err);
+        console.warn('Falha ao inicializar listener do Firestore:', err);
       }
     }
 
-    // Fallback sem Firestore
-    const cached = localStorage.getItem(PRAYERS_KEY);
-    prayerRequestsData = cached ? JSON.parse(cached) : MOCK_PRAYERS;
+    setFirebaseStatus('offline');
+    prayerRequestsData = loadLocalPrayersCache();
     renderPrayerRequests();
   }
 
@@ -244,12 +341,21 @@
 
     if (filtered.length === 0) {
       prayersList.innerHTML = `
-        <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center; background: var(--white); border-radius: 16px; border: 1px dashed var(--line);">
-          <p style="font-size: 32px; margin: 0 0 10px;">🕊️</p>
-          <strong style="font-size: 18px; color: var(--ink);">Nenhum pedido de oração encontrado</strong>
-          <p style="color: var(--muted); font-size: 14px; margin: 6px 0 0;">Tente alterar os filtros ou a busca acima.</p>
+        <div class="empty-state" style="grid-column: 1 / -1; padding: 48px 24px; text-align: center; background: var(--white); border-radius: 18px; border: 1px dashed var(--line);">
+          <p style="font-size: 40px; margin: 0 0 12px;">🕊️</p>
+          <strong style="font-size: 19px; color: var(--ink); display: block;">Nenhum pedido de oração cadastrado ainda</strong>
+          <p style="color: var(--muted); font-size: 14px; margin: 8px auto 20px; max-width: 460px; line-height: 1.5;">
+            Os pedidos enviados pelos visitantes e fiéis na página <strong>/contato</strong> do site aparecerão aqui em tempo real. Você também pode registrar pedidos recebidos presencialmente ou por mensagem.
+          </p>
+          <button id="btn-empty-add-prayer" class="button button-primary" type="button">+ Registrar Pedido de Oração</button>
         </div>
       `;
+      const emptyBtn = document.getElementById('btn-empty-add-prayer');
+      if (emptyBtn && prayerModal) {
+        emptyBtn.addEventListener('click', () => {
+          prayerModal.style.display = 'flex';
+        });
+      }
       return;
     }
 
@@ -257,16 +363,17 @@
       const statusLabel = item.status === 'atendido' ? 'Atendido / Orado ✅' : (item.status === 'em_oracao' ? 'Em Oração 🙏' : 'Novo / Pendente ⏳');
       const statusClass = `status-${item.status || 'novo'}`;
       const congregationTag = item.congregation || 'Não informada';
-      const whatsMessage = encodeURIComponent(`A paz do Senhor, ${item.name}! Somos da liderança da Igreja Semente da Multiplicação. Lemos o seu pedido de oração e estamos intercedendo por você diante de Deus! Que Ele abençoe a sua vida e seu lar.`);
+      const whatsMessage = encodeURIComponent(`A paz do Senhor, ${item.name}! Somos da liderança da Igreja Evangélica Semente da Multiplicação. Lemos o seu pedido de oração e estamos intercedendo por você diante de Deus! Que Ele abençoe a sua vida e seu lar.`);
       const whatsUrl = `https://wa.me/?text=${whatsMessage}`;
 
       return `
         <article class="prayer-card" data-id="${item.id}">
           <div class="prayer-card-top">
             <div>
-              <h3 class="prayer-name">${item.name || 'Anônimo'}</h3>
+              <h3 class="prayer-name">${item.name || 'Irmão(ã) anônimo(a)'}</h3>
               <span class="prayer-meta">📍 ${congregationTag} · ${formatDateTime(item.created_at)}</span>
               ${item.email ? `<span class="prayer-meta" style="color: var(--petrol); font-weight: 600;">✉️ ${item.email}</span>` : ''}
+              ${item.contact ? `<span class="prayer-meta" style="color: var(--petrol); font-weight: 600;">📞 ${item.contact}</span>` : ''}
             </div>
             <span class="prayer-status-pill ${statusClass}">${statusLabel}</span>
           </div>
@@ -275,7 +382,7 @@
             <button class="btn-small btn-status-toggle" type="button" data-action="toggle-status" data-id="${item.id}" data-current-status="${item.status || 'novo'}">
               🔄 Mudar Status
             </button>
-            <a class="btn-small btn-whatsapp" href="${whatsUrl}" target="_blank" rel="noreferrer" title="Mandar mensagem de fé no WhatsApp">
+            <a class="btn-small btn-whatsapp" href="${whatsUrl}" target="_blank" rel="noreferrer" title="Mandar mensagem de fé">
               💬 Orar / Responder
             </a>
             <button class="btn-small btn-delete" type="button" data-action="delete-prayer" data-id="${item.id}" title="Excluir este pedido">
@@ -287,7 +394,7 @@
     }).join('');
   }
 
-  // Ações nos Pedidos de Oração
+  // Ações nos Pedidos de Oração (Alterar status ou Excluir)
   if (prayersList) {
     prayersList.addEventListener('click', async (e) => {
       const btn = e.target.closest('button');
@@ -299,32 +406,26 @@
         const current = btn.dataset.currentStatus;
         const nextStatus = current === 'novo' ? 'em_oracao' : (current === 'em_oracao' ? 'atendido' : 'novo');
 
-        // Atualizar memória local
         const item = prayerRequestsData.find(p => p.id === id);
         if (item) item.status = nextStatus;
-        try {
-          localStorage.setItem(PRAYERS_KEY, JSON.stringify(prayerRequestsData));
-        } catch(e) {}
+        saveLocalPrayersCache(prayerRequestsData);
         renderPrayerRequests();
 
-        // Atualizar Firestore se disponível
-        if (window.db && !id.startsWith('demo-')) {
+        if (window.db && !id.startsWith('local-')) {
           try {
             await window.db.collection('prayer_requests').doc(id).update({ status: nextStatus });
           } catch (err) {
-            console.warn('Erro ao salvar status no Firestore:', err);
+            console.warn('Erro ao atualizar status no Firestore:', err);
           }
         }
       } else if (action === 'delete-prayer') {
         if (!confirm('Deseja realmente remover este pedido de oração?')) return;
 
         prayerRequestsData = prayerRequestsData.filter(p => p.id !== id);
-        try {
-          localStorage.setItem(PRAYERS_KEY, JSON.stringify(prayerRequestsData));
-        } catch(e) {}
+        saveLocalPrayersCache(prayerRequestsData);
         renderPrayerRequests();
 
-        if (window.db && !id.startsWith('demo-')) {
+        if (window.db && !id.startsWith('local-')) {
           try {
             await window.db.collection('prayer_requests').doc(id).delete();
           } catch (err) {
@@ -335,13 +436,85 @@
     });
   }
 
+  // Cadastro de Pedido Manual via Modal
+  if (btnOpenPrayerModal && prayerModal) {
+    btnOpenPrayerModal.addEventListener('click', () => {
+      prayerModal.style.display = 'flex';
+      if (manualPrayerForm) manualPrayerForm.reset();
+      const nameInput = document.getElementById('manual-prayer-name');
+      if (nameInput) setTimeout(() => nameInput.focus(), 100);
+    });
+  }
+  if (btnClosePrayerModal && prayerModal) {
+    btnClosePrayerModal.addEventListener('click', () => {
+      prayerModal.style.display = 'none';
+    });
+  }
+  if (btnCancelPrayerModal && prayerModal) {
+    btnCancelPrayerModal.addEventListener('click', () => {
+      prayerModal.style.display = 'none';
+    });
+  }
+  if (prayerModal) {
+    prayerModal.addEventListener('click', (e) => {
+      if (e.target === prayerModal) prayerModal.style.display = 'none';
+    });
+  }
+
+  if (manualPrayerForm) {
+    manualPrayerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nameVal = document.getElementById('manual-prayer-name').value.trim();
+      const congVal = document.getElementById('manual-prayer-congregation').value;
+      const contactVal = document.getElementById('manual-prayer-contact').value.trim();
+      const reasonVal = document.getElementById('manual-prayer-reason').value.trim();
+
+      if (!nameVal || !reasonVal) {
+        alert('Por favor, preencha o nome e o motivo da oração.');
+        return;
+      }
+
+      const newPrayer = {
+        name: nameVal,
+        congregation: congVal,
+        contact: contactVal || null,
+        reason: reasonVal,
+        status: 'novo',
+        created_at: new Date().toISOString()
+      };
+
+      if (window.db) {
+        try {
+          const docRef = await window.db.collection('prayer_requests').add(newPrayer);
+          newPrayer.id = docRef.id;
+          setFirebaseStatus('connected');
+        } catch (err) {
+          console.warn('Erro ao gravar pedido no Firestore:', err);
+          if (err && (err.code === 'permission-denied' || String(err).includes('permission'))) {
+            setFirebaseStatus('rules_denied');
+          }
+          newPrayer.id = 'local-' + Date.now();
+        }
+      } else {
+        newPrayer.id = 'local-' + Date.now();
+      }
+
+      prayerRequestsData.unshift(newPrayer);
+      saveLocalPrayersCache(prayerRequestsData);
+      renderPrayerRequests();
+
+      manualPrayerForm.reset();
+      prayerModal.style.display = 'none';
+    });
+  }
+
   if (filterCongregation) filterCongregation.addEventListener('change', renderPrayerRequests);
   if (filterStatus) filterStatus.addEventListener('change', renderPrayerRequests);
   if (searchPrayer) searchPrayer.addEventListener('input', renderPrayerRequests);
   if (btnRefreshPrayers) btnRefreshPrayers.addEventListener('click', loadPrayerRequests);
 
   // ========================================================================
-  // 4. ABA 2: CONTROLE DE LIVE & BANNERS
+  // 5. ABA 2: CONTROLE DE LIVE & BANNERS (TEMPO REAL)
   // ========================================================================
   function updateLiveUI(isLive) {
     if (isLive) {
@@ -369,15 +542,20 @@
       }
     } catch(e) {}
 
-    // Firestore overrides se disponível
     if (window.db) {
       window.db.collection('config').doc('live').get().then(doc => {
         if (doc.exists) {
+          setFirebaseStatus('connected');
           applyLiveConfigToUI(doc.data());
         } else {
           applyLiveConfigToUI(config);
         }
-      }).catch(() => applyLiveConfigToUI(config));
+      }).catch(err => {
+        if (err && (err.code === 'permission-denied' || String(err).includes('permission'))) {
+          setFirebaseStatus('rules_denied');
+        }
+        applyLiveConfigToUI(config);
+      });
     } else {
       applyLiveConfigToUI(config);
     }
@@ -415,19 +593,29 @@
 
       try {
         localStorage.setItem(LIVE_KEY, JSON.stringify(liveData));
+        window.dispatchEvent(new CustomEvent('semente:live_update', { detail: liveData }));
       } catch(e) {}
 
-      liveSaveStatus.textContent = 'Salvando...';
+      liveSaveStatus.textContent = 'Salvando no Firebase...';
 
       if (window.db) {
         try {
           await window.db.collection('config').doc('live').set(liveData, { merge: true });
+          setFirebaseStatus('connected');
+          liveSaveStatus.textContent = 'Salvo no Firebase com sucesso! ✨';
         } catch (err) {
           console.warn('Erro ao salvar no Firestore config/live:', err);
+          if (err && (err.code === 'permission-denied' || String(err).includes('permission'))) {
+            setFirebaseStatus('rules_denied');
+            liveSaveStatus.textContent = 'Salvo localmente (Publique as regras no Firebase)';
+          } else {
+            liveSaveStatus.textContent = 'Salvo localmente no navegador.';
+          }
         }
+      } else {
+        liveSaveStatus.textContent = 'Salvo localmente com sucesso! ✨';
       }
 
-      liveSaveStatus.textContent = 'Salvo com sucesso! ✨';
       setTimeout(() => {
         liveSaveStatus.textContent = '';
       }, 4000);
@@ -435,28 +623,27 @@
   }
 
   // ========================================================================
-  // 5. ABA 3: EVENTOS & AVISOS
+  // 6. ABA 3: EVENTOS & AVISOS (DADOS REAIS DA IGREJA)
   // ========================================================================
-  const MOCK_EVENTS = [
-    {
-      id: 'mock-evt-1',
-      title: 'Culto de Santa Ceia do Senhor',
-      congregation: 'Ambas as congregações',
-      date: '1º Domingo de cada mês (9h30 Sapopemba · 18h30 Antonieta)',
-      location: 'Jardim Sapopemba e Vila Antonieta',
-      description: 'Momento de comunhão, renovação de aliança e celebração com o pão e o cálice.',
-      published: true
-    },
-    {
-      id: 'mock-evt-2',
-      title: 'Vigília da Madrugada · Clamor pelo Brasil',
-      congregation: 'Vila Antonieta',
-      date: 'Última Sexta-feira do Mês às 23h30',
-      location: 'Rua Júlio Parigot, 228 · Vila Antonieta',
-      description: 'Uma noite de busca profunda, louvor e intercessão pela igreja e pelas famílias.',
-      published: true
-    }
-  ];
+  function loadLocalEventsCache() {
+    try {
+      const cached = localStorage.getItem(EVENTS_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.filter(e => !String(e.id).startsWith('mock-'));
+        }
+      }
+    } catch(e) {}
+    return REAL_INITIAL_EVENTS;
+  }
+
+  function saveLocalEventsCache(list) {
+    try {
+      localStorage.setItem(EVENTS_KEY, JSON.stringify(list));
+      window.dispatchEvent(new CustomEvent('semente:events_update', { detail: list }));
+    } catch(e) {}
+  }
 
   function loadEvents() {
     eventsList.innerHTML = '<p class="loading-state">Buscando eventos...</p>';
@@ -464,28 +651,27 @@
     if (window.db) {
       try {
         window.db.collection('events').get().then(snapshot => {
+          setFirebaseStatus('connected');
           if (snapshot.empty) {
-            const cached = localStorage.getItem(EVENTS_KEY);
-            eventsData = cached ? JSON.parse(cached) : MOCK_EVENTS;
+            eventsData = loadLocalEventsCache();
           } else {
             eventsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            try {
-              localStorage.setItem(EVENTS_KEY, JSON.stringify(eventsData));
-            } catch(e) {}
+            saveLocalEventsCache(eventsData);
           }
           renderEvents();
         }).catch(err => {
           console.warn('Erro ao carregar eventos:', err);
-          const cached = localStorage.getItem(EVENTS_KEY);
-          eventsData = cached ? JSON.parse(cached) : MOCK_EVENTS;
+          if (err && (err.code === 'permission-denied' || String(err).includes('permission'))) {
+            setFirebaseStatus('rules_denied');
+          }
+          eventsData = loadLocalEventsCache();
           renderEvents();
         });
         return;
       } catch(e) {}
     }
 
-    const cached = localStorage.getItem(EVENTS_KEY);
-    eventsData = cached ? JSON.parse(cached) : MOCK_EVENTS;
+    eventsData = loadLocalEventsCache();
     renderEvents();
   }
 
@@ -567,8 +753,12 @@
         try {
           const docRef = await window.db.collection('events').add(newEvent);
           newEvent.id = docRef.id;
+          setFirebaseStatus('connected');
         } catch (err) {
           console.warn('Erro ao adicionar evento no Firestore:', err);
+          if (err && (err.code === 'permission-denied' || String(err).includes('permission'))) {
+            setFirebaseStatus('rules_denied');
+          }
           newEvent.id = 'evt-' + Date.now();
         }
       } else {
@@ -576,9 +766,7 @@
       }
 
       eventsData.unshift(newEvent);
-      try {
-        localStorage.setItem(EVENTS_KEY, JSON.stringify(eventsData));
-      } catch(e) {}
+      saveLocalEventsCache(eventsData);
 
       eventFormCard.style.display = 'none';
       eventForm.reset();
@@ -597,9 +785,7 @@
         const item = eventsData.find(evt => evt.id === id);
         if (item) {
           item.published = !item.published;
-          try {
-            localStorage.setItem(EVENTS_KEY, JSON.stringify(eventsData));
-          } catch(e) {}
+          saveLocalEventsCache(eventsData);
           renderEvents();
 
           if (window.db && !id.startsWith('mock-') && !id.startsWith('evt-')) {
@@ -611,9 +797,7 @@
       } else if (action === 'delete-event') {
         if (!confirm('Deseja excluir este evento?')) return;
         eventsData = eventsData.filter(evt => evt.id !== id);
-        try {
-          localStorage.setItem(EVENTS_KEY, JSON.stringify(eventsData));
-        } catch(e) {}
+        saveLocalEventsCache(eventsData);
         renderEvents();
 
         if (window.db && !id.startsWith('mock-') && !id.startsWith('evt-')) {
@@ -626,13 +810,30 @@
   }
 
   // ========================================================================
-  // CARREGAMENTO INICIAL DO DASHBOARD
+  // 7. CARREGAMENTO INICIAL DO DASHBOARD & ESCUTA ENTRE ABAS
   // ========================================================================
   function loadAllDashboardData() {
     loadPrayerRequests();
     loadLiveConfig();
     loadEvents();
   }
+
+  // Ouve novos pedidos enviados a partir do próprio site em outra aba
+  window.addEventListener('storage', (e) => {
+    if (e.key === PRAYERS_KEY) {
+      prayerRequestsData = loadLocalPrayersCache();
+      renderPrayerRequests();
+    } else if (e.key === EVENTS_KEY) {
+      eventsData = loadLocalEventsCache();
+      renderEvents();
+    } else if (e.key === LIVE_KEY) {
+      loadLiveConfig();
+    }
+  });
+
+  window.addEventListener('semente:prayer_submitted', () => {
+    loadPrayerRequests();
+  });
 
   // Inicializa verificação de autenticação ao carregar
   checkAuth();

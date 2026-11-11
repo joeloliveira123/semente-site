@@ -26,6 +26,10 @@
           </div>
         </div>
         <div class="painel-header-actions">
+          <div id="firebase-status-badge" class="firebase-badge" title="Status da sincronização com o Firebase">
+            <span class="badge-dot"></span>
+            <span id="firebase-badge-text">Firebase...</span>
+          </div>
           <a href="/" target="_blank" class="quiet-link" title="Abrir site da igreja em nova aba">Ver site ↗</a>
           <button id="btn-logout" class="button button-dark btn-logout" style="display: none;" type="button">Bloquear / Sair</button>
         </div>
@@ -89,6 +93,15 @@
           </button>
         </nav>
 
+        <!-- Alerta de Regras do Firebase Firestore -->
+        <div id="firebase-rules-alert" class="firebase-rules-alert" style="display: none;">
+          <div class="alert-content">
+            <strong>⚠️ Sincronização em Nuvem (Firebase Firestore):</strong>
+            <p>O projeto <code>semente-multiplicacao</code> está conectado, mas as regras de segurança no console do Firebase precisam ser publicadas para permitir a gravação remota. Enquanto isso, o painel funciona com sincronização local em tempo real.</p>
+          </div>
+          <button id="btn-show-rules" class="button button-small button-rules" type="button">📋 Ver / Copiar Regras do Firestore</button>
+        </div>
+
         <!-- Aba 1: Pedidos de Oração -->
         <section id="tab-oracao" class="dashboard-tab active">
           <div class="tab-header">
@@ -97,7 +110,8 @@
               <p>Acompanhe os pedidos de intercessão enviados pelos fiéis e visitantes no site.</p>
             </div>
             <div class="tab-header-actions">
-              <button id="btn-refresh-prayers" class="button button-dark" type="button">🔄 Atualizar lista</button>
+              <button id="btn-open-prayer-modal" class="button button-primary" type="button">+ Novo Pedido</button>
+              <button id="btn-refresh-prayers" class="button button-dark" type="button">🔄 Atualizar</button>
             </div>
           </div>
 
@@ -301,6 +315,79 @@
         </section>
       </div>
     </main>
+
+    <!-- Modal de Regras do Firestore -->
+    <div id="rules-modal" class="modal-backdrop" style="display: none;">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Regras de Segurança do Firebase Firestore</h3>
+          <button id="btn-close-rules" type="button" class="btn-close" aria-label="Fechar modal">✕</button>
+        </div>
+        <div class="modal-body">
+          <p>Para ativar a gravação em nuvem no seu projeto <strong>semente-multiplicacao</strong>:</p>
+          <ol class="rules-steps">
+            <li>Acesse o <a href="https://console.firebase.google.com/project/semente-multiplicacao/firestore/rules" target="_blank" rel="noreferrer">Console do Firebase (Aba Regras) ↗</a></li>
+            <li>Cole o código abaixo e clique em <strong>Publicar (Publish)</strong>:</li>
+          </ol>
+          <div class="rules-code-wrap">
+            <pre id="rules-code"><code>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /config/{configId} {
+      allow read, write: if true;
+    }
+    match /events/{eventId} {
+      allow read, write: if true;
+    }
+    match /prayer_requests/{requestId} {
+      allow read, write: if true;
+    }
+  }
+}</code></pre>
+            <button id="btn-copy-rules" type="button" class="button button-primary">Copiar Regras 📋</button>
+          </div>
+          <p class="rules-note">✨ Assim que publicar, todas as gravações do painel e do site se sincronizam instantaneamente em nuvem em qualquer dispositivo.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Cadastrar Pedido de Oração Manualmente -->
+    <div id="prayer-modal" class="modal-backdrop" style="display: none;">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Registrar Pedido de Oração</h3>
+          <button id="btn-close-prayer-modal" type="button" class="btn-close" aria-label="Fechar modal">✕</button>
+        </div>
+        <form id="manual-prayer-form" class="modal-body" novalidate>
+          <label>
+            Nome da pessoa *
+            <input id="manual-prayer-name" type="text" required placeholder="Ex.: Maria de Fátima" />
+          </label>
+          <div class="form-row">
+            <label>
+              Congregação
+              <select id="manual-prayer-congregation">
+                <option value="Jardim Sapopemba">Jardim Sapopemba</option>
+                <option value="Vila Antonieta">Vila Antonieta</option>
+                <option value="Ainda não frequento">Visitante / Não frequenta</option>
+              </select>
+            </label>
+            <label>
+              Telefone / WhatsApp ou E-mail (opcional)
+              <input id="manual-prayer-contact" type="text" placeholder="(11) 98765-4321" />
+            </label>
+          </div>
+          <label>
+            Motivo da Oração / Clamor *
+            <textarea id="manual-prayer-reason" rows="3" required placeholder="Descreva o motivo de intercessão..."></textarea>
+          </label>
+          <div class="modal-footer">
+            <button type="submit" class="button button-primary">Salvar Pedido 🕊️</button>
+            <button id="btn-cancel-prayer-modal" type="button" class="button button-dark">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Scripts do Firebase e do Painel -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
