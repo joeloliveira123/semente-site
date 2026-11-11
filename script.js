@@ -559,27 +559,8 @@ const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
   });
 })();
 
-/* ===== Atmosfera Dark, Luz de Cursor (Bento Spotlight) e Contadores Cinéticos ===== */
+/* ===== Atmosfera Acolhedora & Contadores Cinéticos ===== */
 (function initAtmosphericAndKinetic() {
-  const shell = document.querySelector('#site-shell');
-  if (shell && !document.querySelector('.ambient-orbs')) {
-    const orbs = document.createElement('div');
-    orbs.className = 'ambient-orbs';
-    orbs.setAttribute('aria-hidden', 'true');
-    orbs.innerHTML = '<span class="orb orb-lime"></span><span class="orb orb-emerald"></span><span class="orb orb-petrol"></span>';
-    shell.prepend(orbs);
-  }
-
-  // Cursor spotlight para cards Bento e botões
-  const interactiveSelector = '.goal-card, .project-card, .location-card, .agenda-item, .playlist-card, .content-link, .button-primary, .nav-cta, .button-dark';
-  document.addEventListener('pointermove', event => {
-    const target = event.target.closest(interactiveSelector);
-    if (!target) return;
-    const rect = target.getBoundingClientRect();
-    target.style.setProperty('--mouse-x', `${event.clientX - rect.left}px`);
-    target.style.setProperty('--mouse-y', `${event.clientY - rect.top}px`);
-  }, { passive: true });
-
   // Contadores numéricos cinéticos quando entram na tela
   if (!('IntersectionObserver' in window)) return;
   const counterElements = document.querySelectorAll('.card-number, .location-number, .story-step span, .hero-badge span');
@@ -592,7 +573,6 @@ const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
       el.dataset.counted = 'true';
 
       const original = el.textContent;
-      // Anima números (ex: "Desde 1997", "01 / 1997", "Meta 01", "01")
       const matches = [...original.matchAll(/\d+/g)];
       if (!matches.length) return;
 
@@ -603,7 +583,6 @@ const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
         const progress = Math.min(1, (now - startTime) / duration);
         const eased = 1 - Math.pow(1 - progress, 4); // easeOutQuart
         let updated = original;
-        // Substitui da direita para a esquerda para preservar índices
         for (let i = matches.length - 1; i >= 0; i--) {
           const m = matches[i];
           const targetVal = parseInt(m[0], 10);
@@ -726,4 +705,111 @@ const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
 
   // Expõe no window para testes
   window.launchDoveMotion = launchFlock;
+})();
+
+/* ===== Automação Inteligente de Banners de Transmissão (Sobe o banner no momento certo da live) ===== */
+(function initLiveBannerAutomation() {
+  const banner = document.querySelector('[data-live-banner]');
+  if (!banner) return;
+  const bannerImg = banner.querySelector('img');
+  const bannerLink = banner.querySelector('a');
+
+  const BANNER_MAP = {
+    oracao: 'assets/banner-live-oracao.jpg',
+    familiaSapopemba: 'assets/banner-culto-familia-sapopemba.jpg',
+    familiaAntonieta: 'assets/banner-culto-familia-antonieta.jpg',
+    ceiaSapopemba: 'assets/banner-santa-ceia-sapopemba.jpg',
+    ceiaAntonieta: 'assets/banner-santa-ceia-antonieta.jpg'
+  };
+
+  let firestoreLiveConfig = null;
+  if (window.db) {
+    try {
+      window.db.collection('config').doc('live').onSnapshot(doc => {
+        if (doc && doc.exists) {
+          firestoreLiveConfig = doc.data();
+          updateLiveBanner();
+        }
+      }, () => {});
+    } catch (e) {}
+  }
+
+  function updateLiveBanner() {
+    // 1. Modos de Teste / Pré-visualização via URL (ex: ?live=ceia-sapopemba ou ?live=1)
+    const urlParams = new URLSearchParams(window.location.search);
+    const testLive = urlParams.get('live') || urlParams.get('preview') || urlParams.get('test_live');
+    if (testLive) {
+      let testSrc = BANNER_MAP.oracao;
+      if (testLive === 'familia-sapopemba') testSrc = BANNER_MAP.familiaSapopemba;
+      else if (testLive === 'familia-antonieta') testSrc = BANNER_MAP.familiaAntonieta;
+      else if (testLive === 'ceia-sapopemba') testSrc = BANNER_MAP.ceiaSapopemba;
+      else if (testLive === 'ceia-antonieta') testSrc = BANNER_MAP.ceiaAntonieta;
+      if (bannerImg && bannerImg.getAttribute('src') !== testSrc) {
+        bannerImg.src = testSrc;
+      }
+      banner.removeAttribute('hidden');
+      return;
+    }
+
+    // 2. Controle Manual via Painel Pastoral (Firestore ou LocalStorage)
+    let manualConfig = firestoreLiveConfig;
+    if (!manualConfig) {
+      try {
+        const stored = localStorage.getItem('semente_manual_live');
+        if (stored) manualConfig = JSON.parse(stored);
+      } catch (e) {}
+    }
+
+    if (manualConfig && manualConfig.isLive === true) {
+      const chosenKey = manualConfig.banner || 'oracao';
+      const manualSrc = BANNER_MAP[chosenKey] || BANNER_MAP.oracao;
+      if (bannerImg && bannerImg.getAttribute('src') !== manualSrc) {
+        bannerImg.src = manualSrc;
+      }
+      if (bannerLink && manualConfig.youtubeUrl) {
+        bannerLink.href = manualConfig.youtubeUrl;
+      }
+      banner.removeAttribute('hidden');
+      return;
+    }
+
+    // 3. Horário oficial de Brasília (America/Sao_Paulo)
+    const now = new Date();
+    const brasiliaStr = now.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" });
+    const bDate = new Date(brasiliaStr);
+    const day = bDate.getDay(); // 0 = Domingo, 1 = Segunda, ..., 5 = Sexta, 6 = Sábado
+    const dayOfMonth = bDate.getDate(); // 1 a 31
+    const isFirstSunday = (day === 0 && dayOfMonth <= 7);
+    const totalMinutes = bDate.getHours() * 60 + bDate.getMinutes();
+
+    let activeBanner = null;
+
+    // A) Live de Oração Matinal: Segunda a Sexta, das 06h15 às 08h00 (375 a 480 min)
+    if (day >= 1 && day <= 5 && totalMinutes >= 375 && totalMinutes <= 480) {
+      activeBanner = BANNER_MAP.oracao;
+    }
+    // B) Domingo de Manhã em Jardim Sapopemba: das 09h15 às 12h00 (555 a 720 min)
+    else if (day === 0 && totalMinutes >= 555 && totalMinutes <= 720) {
+      activeBanner = isFirstSunday ? BANNER_MAP.ceiaSapopemba : BANNER_MAP.familiaSapopemba;
+    }
+    // C) Domingo à Noite em Vila Antonieta: das 18h15 às 21h00 (1095 a 1260 min)
+    else if (day === 0 && totalMinutes >= 1095 && totalMinutes <= 1260) {
+      activeBanner = isFirstSunday ? BANNER_MAP.ceiaAntonieta : BANNER_MAP.familiaAntonieta;
+    }
+
+    if (activeBanner) {
+      if (bannerImg && bannerImg.getAttribute('src') !== activeBanner) {
+        bannerImg.src = activeBanner;
+      }
+      if (bannerLink && (!manualConfig || !manualConfig.youtubeUrl)) {
+        bannerLink.href = 'https://www.youtube.com/@missaosemente2012/live';
+      }
+      banner.removeAttribute('hidden');
+    } else {
+      banner.setAttribute('hidden', '');
+    }
+  }
+
+  updateLiveBanner();
+  setInterval(updateLiveBanner, 30000);
 })();

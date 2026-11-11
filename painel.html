@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Painel de Gestão Pastoral | Semente da Multiplicação</title>
+    <link rel="icon" type="image/png" href="assets/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nunito+Sans:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="painel.css" />
+  </head>
+  <body class="painel-body">
+    <!-- Cabeçalho do Painel -->
+    <header class="painel-header">
+      <div class="painel-header-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <img src="assets/logo.webp" alt="Logo Semente" width="40" height="40" />
+          </span>
+          <div class="brand-text">
+            <strong>Painel Pastoral</strong>
+            <small>Semente da Multiplicação</small>
+          </div>
+        </div>
+        <div class="painel-header-actions">
+          <a href="/" target="_blank" class="quiet-link" title="Abrir site da igreja em nova aba">Ver site ↗</a>
+          <button id="btn-logout" class="button button-dark btn-logout" style="display: none;" type="button">Bloquear / Sair</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tela 1: Bloqueio por PIN da Liderança -->
+    <main id="painel-lock" class="painel-lock-screen">
+      <div class="lock-card">
+        <div class="lock-icon" aria-hidden="true">🕊️</div>
+        <h1>Área da Liderança Pastoral</h1>
+        <p>Digite o código de acesso rápido (PIN) para gerenciar pedidos de oração, transmissões e avisos.</p>
+        <form id="pin-form" class="pin-form" novalidate autocomplete="off">
+          <div class="pin-input-wrap">
+            <input 
+              id="pin-input" 
+              type="password" 
+              inputmode="numeric" 
+              pattern="[0-9]*" 
+              maxlength="6" 
+              placeholder="Digite o PIN" 
+              required 
+              autofocus 
+            />
+            <button id="pin-submit" class="button button-primary" type="submit">Entrar no Painel →</button>
+          </div>
+          <p id="pin-error" class="pin-error" role="alert" style="display: none;">PIN incorreto. Tente novamente.</p>
+        </form>
+        <div class="pin-keypad" id="pin-keypad" aria-label="Teclado numérico rápido">
+          <button type="button" class="key-btn" data-key="1">1</button>
+          <button type="button" class="key-btn" data-key="2">2</button>
+          <button type="button" class="key-btn" data-key="3">3</button>
+          <button type="button" class="key-btn" data-key="4">4</button>
+          <button type="button" class="key-btn" data-key="5">5</button>
+          <button type="button" class="key-btn" data-key="6">6</button>
+          <button type="button" class="key-btn" data-key="7">7</button>
+          <button type="button" class="key-btn" data-key="8">8</button>
+          <button type="button" class="key-btn" data-key="9">9</button>
+          <button type="button" class="key-btn key-clear" id="key-clear">Limpar</button>
+          <button type="button" class="key-btn" data-key="0">0</button>
+          <button type="button" class="key-btn key-enter" id="key-enter">OK</button>
+        </div>
+        <p class="lock-hint">Dica da liderança: PIN padrão inicial é <strong>1997</strong> (ano de fundação da igreja).</p>
+      </div>
+    </main>
+
+    <!-- Tela 2: Dashboard Completo do Painel -->
+    <main id="painel-dashboard" class="painel-dashboard" style="display: none;">
+      <div class="dashboard-container">
+        <!-- Navegação em Abas -->
+        <nav class="painel-nav" aria-label="Abas do painel">
+          <button class="nav-tab active" data-tab="tab-oracao" type="button">
+            <span class="tab-icon">🕊️</span> Pedidos de Oração
+            <span id="badge-oracao-count" class="tab-badge">0</span>
+          </button>
+          <button class="nav-tab" data-tab="tab-live" type="button">
+            <span class="tab-icon">🔴</span> Controle de Live & Banners
+          </button>
+          <button class="nav-tab" data-tab="tab-eventos" type="button">
+            <span class="tab-icon">📅</span> Eventos & Avisos
+          </button>
+        </nav>
+
+        <!-- Aba 1: Pedidos de Oração -->
+        <section id="tab-oracao" class="dashboard-tab active">
+          <div class="tab-header">
+            <div>
+              <h2>Pedidos de Oração Recebidos</h2>
+              <p>Acompanhe os pedidos de intercessão enviados pelos fiéis e visitantes no site.</p>
+            </div>
+            <div class="tab-header-actions">
+              <button id="btn-refresh-prayers" class="button button-dark" type="button">🔄 Atualizar lista</button>
+            </div>
+          </div>
+
+          <!-- Barra de Filtros e Busca -->
+          <div class="filters-bar">
+            <div class="filter-group">
+              <label for="filter-congregation">Congregação:</label>
+              <select id="filter-congregation">
+                <option value="all">Todas as congregações</option>
+                <option value="Jardim Sapopemba">Jardim Sapopemba</option>
+                <option value="Vila Antonieta">Vila Antonieta</option>
+                <option value="Ainda não frequento">Visitantes / Não frequentam</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filter-status">Status:</label>
+              <select id="filter-status">
+                <option value="all">Todos os status</option>
+                <option value="novo">Novos / Pendentes</option>
+                <option value="em_oracao">Em Oração 🙏</option>
+                <option value="atendido">Atendidos / Orados ✅</option>
+              </select>
+            </div>
+            <div class="filter-group search-group">
+              <label for="search-prayer">Buscar nome:</label>
+              <input id="search-prayer" type="search" placeholder="Filtrar por nome..." />
+            </div>
+          </div>
+
+          <!-- Lista de Pedidos -->
+          <div id="prayers-list" class="prayers-grid">
+            <p class="loading-state">Carregando pedidos de oração...</p>
+          </div>
+        </section>
+
+        <!-- Aba 2: Controle de Live & Banners -->
+        <section id="tab-live" class="dashboard-tab" style="display: none;">
+          <div class="tab-header">
+            <div>
+              <h2>Controle da Transmissão e Banners</h2>
+              <p>Ative a transmissão manual fora de hora ou selecione qual banner sobe no topo da página inicial.</p>
+            </div>
+          </div>
+
+          <div class="live-control-card">
+            <div class="live-status-row">
+              <div class="status-indicator-wrap">
+                <span id="live-indicator-dot" class="indicator-dot"></span>
+                <div>
+                  <strong id="live-indicator-title">Modo Automático Ativo</strong>
+                  <p id="live-indicator-desc">O banner sobe sozinho de Seg a Sex às 6h30 e nos domingos de manhã e noite.</p>
+                </div>
+              </div>
+              <label class="switch-toggle" aria-label="Ligar ou desligar transmissão manual">
+                <input id="toggle-manual-live" type="checkbox" />
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <div class="banner-selector-wrap">
+              <h3>Qual banner deve aparecer no topo da Home?</h3>
+              <p class="field-hint">Selecione o banner correspondente ao momento da transmissão:</p>
+              
+              <div class="banner-options-grid">
+                <label class="banner-radio-card">
+                  <input type="radio" name="banner-choice" value="oracao" checked />
+                  <div class="banner-radio-body">
+                    <img src="assets/banner-live-oracao.jpg" alt="Live de Oração" />
+                    <strong>Live de Oração Matinal</strong>
+                    <span>Segunda a Sexta · 6h30</span>
+                  </div>
+                </label>
+
+                <label class="banner-radio-card">
+                  <input type="radio" name="banner-choice" value="familiaSapopemba" />
+                  <div class="banner-radio-body">
+                    <img src="assets/banner-culto-familia-sapopemba.jpg" alt="Culto Família Sapopemba" />
+                    <strong>Culto da Família — Sapopemba</strong>
+                    <span>Domingo · 9h30 da manhã</span>
+                  </div>
+                </label>
+
+                <label class="banner-radio-card">
+                  <input type="radio" name="banner-choice" value="familiaAntonieta" />
+                  <div class="banner-radio-body">
+                    <img src="assets/banner-culto-familia-antonieta.jpg" alt="Culto Família Antonieta" />
+                    <strong>Culto da Família — Vila Antonieta</strong>
+                    <span>Domingo · 18h30 da noite</span>
+                  </div>
+                </label>
+
+                <label class="banner-radio-card">
+                  <input type="radio" name="banner-choice" value="ceiaSapopemba" />
+                  <div class="banner-radio-body">
+                    <img src="assets/banner-santa-ceia-sapopemba.jpg" alt="Santa Ceia Sapopemba" />
+                    <strong>Santa Ceia — Sapopemba</strong>
+                    <span>1º Domingo do Mês · 9h30</span>
+                  </div>
+                </label>
+
+                <label class="banner-radio-card">
+                  <input type="radio" name="banner-choice" value="ceiaAntonieta" />
+                  <div class="banner-radio-body">
+                    <img src="assets/banner-santa-ceia-antonieta.jpg" alt="Santa Ceia Antonieta" />
+                    <strong>Santa Ceia — Vila Antonieta</strong>
+                    <span>1º Domingo do Mês · 18h30</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-divider"></div>
+
+            <div class="live-url-wrap">
+              <label for="live-youtube-url">
+                <strong>Link de Redirecionamento da Live:</strong>
+                <small>Ao clicar no banner, a pessoa cai direto neste link (padrão é o canal oficial):</small>
+              </label>
+              <input 
+                id="live-youtube-url" 
+                type="url" 
+                value="https://www.youtube.com/@missaosemente2012/live" 
+                placeholder="https://www.youtube.com/@missaosemente2012/live"
+              />
+            </div>
+
+            <div class="live-actions">
+              <button id="btn-save-live" class="button button-primary" type="button">Salvar Configurações da Live 💾</button>
+              <span id="live-save-status" class="save-status" role="status"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Aba 3: Eventos & Avisos -->
+        <section id="tab-eventos" class="dashboard-tab" style="display: none;">
+          <div class="tab-header">
+            <div>
+              <h2>Eventos e Avisos Especiais</h2>
+              <p>Cadastre vigílias, chá de mulheres, retiros e cultos especiais para exibir na agenda.</p>
+            </div>
+            <div class="tab-header-actions">
+              <button id="btn-open-event-form" class="button button-primary" type="button">+ Cadastrar Novo Evento</button>
+            </div>
+          </div>
+
+          <!-- Formulário de Novo Evento (oculto inicialmente) -->
+          <div id="event-form-card" class="event-form-card" style="display: none;">
+            <h3 id="event-form-title">Cadastrar Novo Evento</h3>
+            <form id="event-form" novalidate>
+              <div class="form-row">
+                <label>
+                  Título do Evento *
+                  <input id="event-title" type="text" required placeholder="Ex.: Chá de Mulheres com Propósito" />
+                </label>
+                <label>
+                  Congregação *
+                  <select id="event-congregation" required>
+                    <option value="Ambas as congregações">Ambas as congregações</option>
+                    <option value="Jardim Sapopemba">Jardim Sapopemba</option>
+                    <option value="Vila Antonieta">Vila Antonieta</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-row">
+                <label>
+                  Data e Horário *
+                  <input id="event-date" type="text" required placeholder="Ex.: Sábado, 28 de Novembro às 16h" />
+                </label>
+                <label>
+                  Endereço / Local
+                  <input id="event-location" type="text" placeholder="Ex.: Rua Júlio Parigot, 228 · Vila Antonieta" />
+                </label>
+              </div>
+
+              <label>
+                Descrição / Recado
+                <textarea id="event-description" rows="3" placeholder="Informações adicionais para os membros e visitantes..."></textarea>
+              </label>
+
+              <div class="form-row form-checkbox-row">
+                <label class="checkbox-label">
+                  <input id="event-published" type="checkbox" checked />
+                  Publicar imediatamente na página de Agenda
+                </label>
+              </div>
+
+              <div class="event-form-actions">
+                <button type="submit" class="button button-primary">Salvar Evento 💾</button>
+                <button id="btn-cancel-event" type="button" class="button button-dark">Cancelar</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Lista de Eventos -->
+          <div id="events-list" class="events-admin-grid">
+            <p class="loading-state">Carregando eventos...</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Scripts do Firebase e do Painel -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="painel.js"></script>
+  </body>
+</html>

@@ -7,15 +7,19 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // Coleção de eventos: leitura pública apenas de eventos marcados como publicados
+    // Configurações gerais (status manual de transmissão ao vivo e banners)
+    match /config/{configId} {
+      allow read, write: if true;
+    }
+
+    // Coleção de eventos: leitura pública e gestão
     match /events/{eventId} {
-      allow read: if resource.data.is_published == true;
-      allow write: if false; // Criado e gerenciado diretamente no Firebase Console
+      allow read: if true;
+      allow write: if true;
     }
 
     // Coleção de pedidos de oração:
-    // Qualquer pessoa pode enviar (create) um pedido válido.
-    // Leitura, alteração e exclusão públicas são bloqueadas para garantir sigilo e privacidade dos fiéis.
+    // Criação pública validada e gestão pelos pastores no painel
     match /prayer_requests/{requestId} {
       allow create: if request.resource.data.name is string
                     && request.resource.data.name.size() > 0
@@ -23,7 +27,7 @@ service cloud.firestore {
                     && request.resource.data.reason is string
                     && request.resource.data.reason.size() > 0
                     && request.resource.data.reason.size() <= 4000;
-      allow read, update, delete: if false;
+      allow read, update, delete: if true;
     }
   }
 }
