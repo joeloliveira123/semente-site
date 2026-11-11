@@ -84,3 +84,384 @@
 .pill-dot{width:8px;height:8px;border-radius:50%;background:#e53935;box-shadow:0 0 8px rgba(229,57,53,.7);display:inline-block}
 @media (max-width:760px){.home-banner-section{margin-top:14px;padding:0 18px}.banner-card-link{border-radius:16px}.banner-floating-pill{right:12px;bottom:12px;padding:7px 12px;font-size:9px}}
 
+/* ===== Animações dos Eventos Especiais (Culto de Missões e Cantata de Natal) ===== */
+.event-media-anim {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 35%, #8c0c20, #42040e 65%, #180306);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 440px;
+  overflow: hidden;
+  padding: 12px;
+}
+
+.cantata-anim-stage {
+  --gold: #f0cb70;
+  --gold2: #c9972f;
+  --wine: #5a0714;
+  --red: #a30f26;
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 9/16;
+  height: min(100%, 530px);
+  max-height: 540px;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 35%, var(--red), var(--wine) 65%, #240509);
+  container-type: size;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: #fff6e0;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.cantata-arch {
+  position: absolute;
+  left: 50%;
+  top: 5%;
+  width: 84%;
+  height: 90%;
+  transform: translateX(-50%);
+  border: 2px solid var(--gold2);
+  border-radius: 50% 50% 0 0 / 28% 28% 0 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cantata-star {
+  position: absolute;
+  top: -5%;
+  color: var(--gold);
+  opacity: 0;
+  animation: cantataFall linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes cantataFall {
+  0% { transform: translateY(0); opacity: 0; }
+  15% { opacity: 0.7; }
+  100% { transform: translateY(115cqh); opacity: 0; }
+}
+
+.cantata-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 14%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.cantata-scene.on {
+  opacity: 1;
+}
+
+.cantata-scene > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cantata-scene.on > * {
+  opacity: 1;
+  transform: none;
+}
+
+.cantata-scene.on > *:nth-child(2) {
+  transition-delay: 0.35s;
+}
+
+.cantata-scene.on > *:nth-child(3) {
+  transition-delay: 0.7s;
+}
+
+.cantata-scene.out > * {
+  opacity: 0;
+  transform: translateY(-12px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.cantata-kicker {
+  font-family: 'Cinzel', 'GFS Baskerville', serif;
+  letter-spacing: 0.3em;
+  font-size: 3.4cqw;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.cantata-big {
+  font-family: 'Cinzel', 'GFS Baskerville', serif;
+  font-weight: 700;
+  font-size: 11cqw;
+  line-height: 1.1;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.cantata-title {
+  font-family: 'Cinzel', 'GFS Baskerville', serif;
+  font-weight: 700;
+  font-size: 13cqw;
+  line-height: 1.05;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #fff3c4, var(--gold) 50%, var(--gold2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+}
+
+.cantata-it {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 6cqw;
+  line-height: 1.25;
+}
+
+.cantata-rule {
+  width: 28cqw;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 3.5cqw 0;
+}
+
+.cantata-logo {
+  width: 30cqw;
+  height: auto;
+  margin-bottom: 4cqw;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+}
+
+/* Culto de Missões — Animação em HTML/CSS pura */
+.event-media-missoes {
+  position: relative;
+  background: radial-gradient(ellipse at center, #050d09, #020503);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 440px;
+  overflow: hidden;
+  padding: 12px;
+}
+
+.missoes-anim-stage {
+  --gold: #f2b705;
+  --cream: #f5efe3;
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 9/16;
+  height: min(100%, 530px);
+  max-height: 540px;
+  overflow: hidden;
+  background: #050806;
+  container-type: size;
+  font-family: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  color: var(--cream);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+
+.missoes-blob {
+  position: absolute;
+  width: 75%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: blur(8cqw);
+  opacity: 0.35;
+  animation: missoesDrift 18s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.missoes-b1 {
+  background: #0b8a3e;
+  left: -20%;
+  top: -25%;
+}
+
+.missoes-b2 {
+  background: #12307a;
+  right: -20%;
+  bottom: -30%;
+  animation-delay: -6s;
+  opacity: 0.45;
+}
+
+.missoes-b3 {
+  background: #f2b705;
+  right: 5%;
+  top: -35%;
+  animation-delay: -10s;
+  opacity: 0.22;
+}
+
+@keyframes missoesDrift {
+  to {
+    transform: translate(8cqw, 6cqh) scale(1.15) rotate(35deg);
+  }
+}
+
+.missoes-veil {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(3, 5, 4, 0.25), rgba(3, 5, 4, 0.88));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.missoes-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 10%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.missoes-scene.on {
+  opacity: 1;
+}
+
+.missoes-scene > * {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.missoes-scene.on > * {
+  opacity: 1;
+  transform: none;
+}
+
+.missoes-scene.on > *:nth-child(2) {
+  transition-delay: 0.35s;
+}
+
+.missoes-scene.on > *:nth-child(3) {
+  transition-delay: 0.7s;
+}
+
+.missoes-scene.out > * {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.missoes-small {
+  font-size: 3.4cqw;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.missoes-big {
+  font-size: 13cqw;
+  line-height: 1.05;
+  font-weight: 800;
+  background: linear-gradient(180deg, #ffffff, var(--cream) 60%, var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-top: 2cqh;
+}
+
+.missoes-mid {
+  font-size: 8.5cqw;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.missoes-mid em, .missoes-scene em {
+  color: var(--gold);
+  font-style: italic;
+}
+
+.missoes-txt {
+  font-size: 4.2cqw;
+  margin-top: 2.5cqh;
+  max-width: 85%;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
+.missoes-logo {
+  width: 28cqw;
+  height: auto;
+  margin-bottom: 2.5cqh;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5));
+}
+
+.missoes-logo-sm {
+  width: 20cqw;
+  margin-bottom: 2cqh;
+}
+
+.missoes-line {
+  width: 14cqw;
+  height: 2px;
+  background: var(--gold);
+  margin: 2.5cqh 0;
+  opacity: 0.85;
+}
+
+.missoes-hello {
+  display: flex;
+  gap: 2.2cqw;
+  margin-top: 3cqh;
+  font-size: 3.8cqw;
+  font-weight: 600;
+  color: var(--gold);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.missoes-hello span {
+  animation: missoesPop 4s ease-in-out infinite;
+}
+
+.missoes-hello span:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.missoes-hello span:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+.missoes-hello span:nth-child(4) {
+  animation-delay: 1.8s;
+}
+
+@keyframes missoesPop {
+  50% {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+  }
+}
+
+@media (max-width: 760px) {
+  .event-media-anim,
+  .event-media-missoes {
+    min-height: 380px;
+    padding: 16px 8px;
+  }
+  .cantata-anim-stage,
+  .missoes-anim-stage {
+    max-height: 480px;
+    width: min(100%, 290px);
+  }
+}
+

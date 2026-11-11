@@ -251,20 +251,22 @@ function eventImageUrl(imagePath) {
 
 const localEvents = [
   {
-    id: 'santa-ceia-mensal',
-    title: 'Culto de Santa Ceia do Senhor',
-    description: 'Celebração da comunhão e renovação de aliança com Deus e com a igreja através do pão e do cálice.',
-    date: '1º Domingo de cada mês · 9h30 (Sapopemba) e 18h30 (Antonieta)',
-    congregation: 'Ambas as congregações',
-    location: 'Jardim Sapopemba (manhã) e Vila Antonieta (noite)'
+    id: 'culto-de-missoes-2026',
+    title: 'Culto de Missões',
+    description: 'Brasil e Angola unidos pelo Evangelho. Duas nações, uma só família. «Ide, portanto, e fazei discípulos de todas as nações.» Venha semear conosco!',
+    starts_at: '2026-11-29T18:30:00-03:00',
+    location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
+    animation: 'culto-missoes',
+    link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP'
   },
   {
-    id: 'vigilia-clamor',
-    title: 'Vigília e Clamor pelas Famílias',
-    description: 'Uma noite dedicada à oração profunda, adoração e intercessão pelos lares e pela juventude.',
-    date: 'Última Sexta-feira do mês às 23h',
-    congregation: 'Vila Antonieta',
-    location: 'Rua Júlio Parigot, 228 — Vila Antonieta'
+    id: 'cantata-de-natal-2026',
+    title: 'Cantata de Natal',
+    description: 'Uma noite de louvor, música e esperança. Venha celebrar o Natal conosco! Traga sua família e amigos!',
+    starts_at: '2026-12-20T18:30:00-03:00',
+    location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
+    animation: 'cantata-natal',
+    link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP'
   }
 ];
 
@@ -277,7 +279,7 @@ function renderEvents(events) {
     section.hidden = false;
     return;
   }
-  container.innerHTML = events.map(event => {
+  container.innerHTML = events.slice().sort((a, b) => new Date(a.starts_at || 0) - new Date(b.starts_at || 0)).map(event => {
     let dateStr = event.date;
     if (!dateStr && event.starts_at) {
       try {
@@ -292,7 +294,83 @@ function renderEvents(events) {
     const cong = event.congregation || (event.location && event.location.includes('Henrique') ? 'Jardim Sapopemba' : 'Vila Antonieta');
     const loc = event.location || 'Consulte os pastores';
     const mapsLink = event.link_url || (loc.includes('Henrique') ? (window.maps?.sapopemba || '#') : (window.maps?.antonieta || '#'));
-    const media = '<div class="event-placeholder" aria-hidden="true">🕊️ Semente</div>';
+
+    let media;
+    if (event.animation === 'culto-missoes' || event.id === 'culto-de-missoes-2026') {
+      media = `
+        <div class="event-media event-media-missoes" aria-label="Animação visual do Culto de Missões">
+          <div class="missoes-anim-stage" data-missoes-stage title="Clique para tela cheia">
+            <div class="missoes-blob missoes-b1" aria-hidden="true"></div>
+            <div class="missoes-blob missoes-b2" aria-hidden="true"></div>
+            <div class="missoes-blob missoes-b3" aria-hidden="true"></div>
+            <div class="missoes-veil" aria-hidden="true"></div>
+            <div class="missoes-scene on">
+              <img class="missoes-logo" alt="Missão Semente" src="assets/logo-missao-semente.png">
+              <div class="missoes-big">Culto de Missões</div>
+            </div>
+            <div class="missoes-scene">
+              <div class="missoes-mid">Brasil <em>+</em> Angola</div>
+              <div class="missoes-line" aria-hidden="true"></div>
+              <div class="missoes-small">Unidos pelo Evangelho</div>
+            </div>
+            <div class="missoes-scene">
+              <div class="missoes-small">Mateus 28:19</div>
+              <div class="missoes-line" aria-hidden="true"></div>
+              <div class="missoes-mid">«Ide, portanto, e fazei discípulos de <em>todas as nações</em>.»</div>
+            </div>
+            <div class="missoes-scene">
+              <div class="missoes-small">Missionários de Angola</div>
+              <div class="missoes-mid">Duas nações,<br><em>uma só família</em></div>
+              <div class="missoes-hello" aria-hidden="true"><span>Bem-vindos</span><span>Karibu</span><span>Bienvenue</span><span>Welcome</span></div>
+            </div>
+            <div class="missoes-scene">
+              <img class="missoes-logo missoes-logo-sm" alt="Missão Semente" src="assets/logo-missao-semente.png">
+              <div class="missoes-mid">Venha <em>semear</em> conosco!</div>
+              <div class="missoes-txt">Domingo, 29 de novembro · 18h30 · Igreja Vila Antonieta</div>
+            </div>
+          </div>
+        </div>`;
+    } else if (event.animation === 'cantata-natal' || event.id === 'cantata-de-natal-2026') {
+      media = `
+        <div class="event-media event-media-anim" aria-label="Animação visual da Cantata de Natal">
+          <div class="cantata-anim-stage" data-cantata-stage>
+            <div class="cantata-arch" aria-hidden="true"></div>
+            <div class="cantata-stars" aria-hidden="true"></div>
+            <div class="cantata-scene on">
+              <h4 class="cantata-title">Cantata<br>de Natal</h4>
+              <div class="cantata-rule" aria-hidden="true"></div>
+            </div>
+            <div class="cantata-scene">
+              <div class="cantata-kicker">Quando</div>
+              <div class="cantata-big" style="margin-top:3cqw">20 de Dezembro</div>
+              <div class="cantata-rule" aria-hidden="true"></div>
+              <div class="cantata-big" style="font-size:16cqw">18h30</div>
+            </div>
+            <div class="cantata-scene">
+              <div class="cantata-kicker">Onde</div>
+              <div class="cantata-rule" aria-hidden="true"></div>
+              <div class="cantata-big" style="font-size:9cqw">Rua Júlio Parigot, 228</div>
+            </div>
+            <div class="cantata-scene">
+              <div class="cantata-it" style="font-size:9cqw">Venha celebrar o Natal conosco!</div>
+              <div class="cantata-rule" aria-hidden="true"></div>
+              <div class="cantata-it" style="font-size:5cqw">Traga sua família e amigos</div>
+            </div>
+            <div class="cantata-scene">
+              <img class="cantata-logo" alt="Logo Missão Semente" src="assets/logo-missao-semente.png">
+              <div class="cantata-it" style="font-size:7cqw">Esperamos você!</div>
+            </div>
+          </div>
+        </div>`;
+    } else if (event.video_url) {
+      media = `<div class="event-media event-media-video"><video class="event-video" src="${escapeHtml(event.video_url)}" poster="${escapeHtml(event.poster || '')}" controls playsinline preload="metadata"></video></div>`;
+    } else if (event.image_path) {
+      const img = eventImageUrl(event.image_path);
+      media = `<img src="${escapeHtml(img)}" alt="Arte do evento ${escapeHtml(event.title)}" loading="lazy">`;
+    } else {
+      media = '<div class="event-placeholder" aria-hidden="true">🕊️ Semente</div>';
+    }
+
     const when = `<div class="event-detail"><span>Quando</span><p>${escapeHtml(dateStr || 'Em breve')}</p></div>`;
     const location = `<div class="event-detail"><span>Onde</span><p>${escapeHtml(loc)}</p></div>`;
     const action = `<a class="event-action-link" href="${escapeHtml(mapsLink)}" target="_blank" rel="noreferrer">Ver endereço no mapa →</a>`;
@@ -301,6 +379,12 @@ function renderEvents(events) {
   }).join('');
   section.hidden = false;
   section.querySelectorAll('.reveal').forEach(element => observer?.observe(element));
+  section.querySelectorAll('[data-missoes-stage]').forEach(stage => {
+    initMissoesAnimation(stage);
+  });
+  section.querySelectorAll('[data-cantata-stage]').forEach(stage => {
+    initCantataAnimation(stage);
+  });
 }
 
 function initMissoesAnimation(stage) {
