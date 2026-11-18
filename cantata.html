@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cantata de Natal — Semente da Multiplicação</title>
+<link rel="icon" type="image/png" href="assets/logo-missao-semente.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#f0cb70;--gold2:#c9972f;--wine:#5a0714;--red:#a30f26;--cream:#fff6e0;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#120204;overflow:hidden}
+#wrap{position:fixed;inset:0;display:grid;place-items:center}
+#stage{position:relative;width:min(100vw,177.78vh);aspect-ratio:16/9;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,var(--red),var(--wine) 65%,#240509);font-family:'Cormorant Garamond',Georgia,serif;color:var(--cream);container-type:size;cursor:pointer}
+.arch{position:absolute;left:50%;top:6%;width:86%;height:88%;transform:translateX(-50%);border:2px solid var(--gold2);border-radius:50% 50% 0 0 / 26% 26% 0 0;pointer-events:none;z-index:1;opacity:.85}
+.star{position:absolute;top:-5%;color:var(--gold);opacity:0;animation:cantataFall linear infinite;pointer-events:none;z-index:1}
+@keyframes cantataFall{0%{transform:translateY(0);opacity:0}15%{opacity:.75}100%{transform:translateY(115cqh);opacity:0}}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 10cqw;opacity:0;transition:opacity 1s;z-index:3;pointer-events:none}
+.scene.on{opacity:1}
+.scene>*{opacity:0;transform:translateY(3cqh);transition:opacity .9s,transform .9s}
+.scene.on>*{opacity:1;transform:none}
+.scene.on>:nth-child(2){transition-delay:.35s}
+.scene.on>:nth-child(3){transition-delay:.7s}
+.scene.on>:nth-child(4){transition-delay:1.05s}
+.kicker{font-family:'Cinzel',serif;letter-spacing:.35em;font-size:2.4cqw;color:var(--gold);text-transform:uppercase;font-weight:700}
+.title{font-family:'Cinzel',serif;font-weight:700;font-size:8.6cqw;line-height:1.05;text-transform:uppercase;background:linear-gradient(180deg,#fff3c4,var(--gold) 50%,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.big{font-family:'Cinzel',serif;font-weight:700;font-size:6.8cqw;line-height:1.1;color:var(--gold);text-transform:uppercase}
+.it{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:4.6cqw;line-height:1.25}
+.rule{width:18cqw;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:2.8cqh 0}
+.logo{width:18cqh;height:auto;margin-bottom:2.8cqh;filter:drop-shadow(0 4px 14px rgba(0,0,0,.45))}
+.fullscreen-hint{position:fixed;bottom:16px;right:16px;font-family:sans-serif;font-size:12px;color:rgba(255,255,255,.45);pointer-events:none;z-index:10;text-transform:uppercase;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage" title="Clique para tela cheia">
+<div class="arch" aria-hidden="true"></div>
+<div id="stars" aria-hidden="true"></div>
+
+<div class="scene on">
+  <h1 class="title" id="cantata-title">Cantata<br>de Natal</h1>
+  <div class="rule"></div>
+</div>
+
+<div class="scene">
+  <div class="kicker">Quando</div>
+  <div class="big" id="cantata-day" style="margin-top:2cqh">20 de Dezembro</div>
+  <div class="rule"></div>
+  <div class="big" id="cantata-time" style="font-size:8.8cqw">18h30</div>
+</div>
+
+<div class="scene">
+  <div class="kicker">Onde</div>
+  <div class="rule"></div>
+  <div class="big" id="cantata-location" style="font-size:5.2cqw">Rua Júlio Parigot, 228 — Vila Antonieta</div>
+</div>
+
+<div class="scene">
+  <div class="it" id="cantata-invite" style="font-size:5.4cqw">Venha celebrar o Natal conosco!</div>
+  <div class="rule"></div>
+  <div class="it" id="cantata-subinvite" style="font-size:3.4cqw">Traga sua família e amigos</div>
+</div>
+
+<div class="scene">
+  <img class="logo" alt="Logo Missão Semente" src="assets/logo-missao-semente.png">
+  <div class="it" style="font-size:4.4cqw">Esperamos você!</div>
+</div>
+</div></div>
+<div class="fullscreen-hint">Clique para tela cheia ⛶</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+const starsBox = document.getElementById('stars');
+for (let k = 0; k < 14; k++) {
+  const s = document.createElement('span');
+  s.className = 'star';
+  s.textContent = '✦';
+  s.style.left = (4 + Math.random() * 92) + '%';
+  s.style.fontSize = (1.2 + Math.random() * 1.4) + 'cqw';
+  s.style.animationDuration = (9 + Math.random() * 7) + 's';
+  s.style.animationDelay = (-Math.random() * 12) + 's';
+  starsBox.appendChild(s);
+}
+
+function applyCantataData(evt) {
+  if (!evt) return;
+  if (evt.title) {
+    const titleEl = document.getElementById('cantata-title');
+    if (titleEl) {
+      titleEl.innerHTML = evt.title.toLowerCase().includes('cantata de natal')
+        ? 'Cantata<br>de Natal'
+        : evt.title;
+    }
+  }
+  const rawDate = evt.date || '';
+  const parts = rawDate.split('·').map(s => s.trim());
+  const dayVal = evt.date_day || parts[0] || '20 de Dezembro';
+  const timeVal = evt.date_time || parts[1] || '18h30';
+  const dayEl = document.getElementById('cantata-day');
+  const timeEl = document.getElementById('cantata-time');
+  if (dayEl) dayEl.textContent = dayVal;
+  if (timeEl) timeEl.textContent = timeVal;
+
+  if (evt.location) {
+    const locEl = document.getElementById('cantata-location');
+    if (locEl) locEl.textContent = evt.location;
+  }
+  if (evt.description) {
+    const invEl = document.getElementById('cantata-invite');
+    if (invEl) invEl.textContent = evt.description;
+  }
+}
+
+try {
+  const cached = JSON.parse(localStorage.getItem('semente_pastoral_events') || '[]');
+  const found = cached.find(e => e.id === 'cantata-de-natal-2026' || e.animation === 'cantata-natal' || /cantata/i.test(e.title || ''));
+  if (found) applyCantataData(found);
+} catch (e) {}
+
+if (window.db) {
+  try {
+    window.db.collection('events').doc('cantata-de-natal-2026').onSnapshot(doc => {
+      if (doc && doc.exists) applyCantataData(doc.data());
+    }, () => {});
+  } catch (e) {}
+}
+
+const sc = [...document.querySelectorAll('.scene')];
+const T = [5500, 7000, 7500, 7000, 7500];
+let i = 0;
+function nextScene() {
+  i = (i + 1) % sc.length;
+  sc.forEach((s, k) => s.classList.toggle('on', k === i));
+  setTimeout(nextScene, T[i]);
+}
+setTimeout(nextScene, T[0]);
+
+document.getElementById('stage').addEventListener('click', () => {
+  try {
+    document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  } catch (e) {}
+});
+</script>
+</body>
+</html>

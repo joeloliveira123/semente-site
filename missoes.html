@@ -45,7 +45,7 @@ em{color:var(--gold);font-style:italic}
 
 <div class="scene">
 <img class="logo" alt="Missão Semente" src="assets/logo-missao-semente.png">
-<div class="big">Culto de Missões</div>
+<div class="big" id="missoes-title">Culto de Missões</div>
 </div>
 
 <div class="scene">
@@ -73,10 +73,38 @@ em{color:var(--gold);font-style:italic}
 </div>
 </div></div>
 <div class="fullscreen-hint">Clique para tela cheia ⛶</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script>
-const INFO = "Domingo, 29 de novembro · 18h30 · Igreja Vila Antonieta";
+const DEFAULT_INFO = "Domingo, 29 de novembro · 18h30 · Igreja Vila Antonieta";
 const SECONDS = 6;
-document.getElementById('info').textContent = INFO;
+const infoEl = document.getElementById('info');
+const titleEl = document.getElementById('missoes-title');
+infoEl.textContent = DEFAULT_INFO;
+
+function applyMissoesData(evt) {
+  if (!evt) return;
+  if (evt.title && titleEl) titleEl.textContent = evt.title;
+  const datePart = evt.date || 'Domingo, 29 de novembro · 18h30';
+  const congPart = evt.congregation ? `Igreja ${evt.congregation}` : (evt.location || 'Igreja Vila Antonieta');
+  infoEl.textContent = `${datePart} · ${congPart}`;
+}
+
+try {
+  const cached = JSON.parse(localStorage.getItem('semente_pastoral_events') || '[]');
+  const found = cached.find(e => e.id === 'culto-de-missoes-2026' || e.animation === 'culto-missoes' || /miss[oõ]es/i.test(e.title || ''));
+  if (found) applyMissoesData(found);
+} catch (e) {}
+
+if (window.db) {
+  try {
+    window.db.collection('events').doc('culto-de-missoes-2026').onSnapshot(doc => {
+      if (doc && doc.exists) applyMissoesData(doc.data());
+    }, () => {});
+  } catch (e) {}
+}
+
 const sc=[...document.querySelectorAll('.scene')];
 let i=0;
 const show=n=>sc.forEach((s,k)=>s.classList.toggle('on',k===n));

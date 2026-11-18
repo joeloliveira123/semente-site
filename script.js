@@ -253,22 +253,50 @@ const localEvents = [
   {
     id: 'culto-de-missoes-2026',
     title: 'Culto de Missões',
+    congregation: 'Vila Antonieta',
+    date_day: 'Domingo, 29 de novembro',
+    date_time: '18h30',
+    date: 'Domingo, 29 de novembro · 18h30',
     description: 'Brasil e Angola unidos pelo Evangelho. Duas nações, uma só família. «Ide, portanto, e fazei discípulos de todas as nações.» Venha semear conosco!',
     starts_at: '2026-11-29T18:30:00-03:00',
     location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
     animation: 'culto-missoes',
-    link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP'
+    link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP',
+    published: true,
+    is_published: true
   },
   {
     id: 'cantata-de-natal-2026',
     title: 'Cantata de Natal',
+    congregation: 'Vila Antonieta',
+    date_day: '20 de Dezembro',
+    date_time: '18h30',
+    date: '20 de Dezembro · 18h30',
     description: 'Uma noite de louvor, música e esperança. Venha celebrar o Natal conosco! Traga sua família e amigos!',
     starts_at: '2026-12-20T18:30:00-03:00',
     location: 'Rua Júlio Parigot, 228 — Vila Antonieta',
     animation: 'cantata-natal',
-    link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP'
+    link_url: 'https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP',
+    published: true,
+    is_published: true
   }
 ];
+
+function normalizeSiteEvent(evt) {
+  const base = localEvents.find(item => item.id === evt.id || (evt.title && item.title.toLowerCase() === evt.title.toLowerCase()));
+  const merged = base ? { ...base, ...evt } : { ...evt };
+  if (!merged.animation) {
+    if (merged.id === 'culto-de-missoes-2026' || /miss[oõ]es/i.test(merged.title || '')) {
+      merged.animation = 'culto-missoes';
+    } else if (merged.id === 'cantata-de-natal-2026' || /cantata/i.test(merged.title || '')) {
+      merged.animation = 'cantata-natal';
+    }
+  }
+  if (!merged.starts_at && base) {
+    merged.starts_at = base.starts_at;
+  }
+  return merged;
+}
 
 function renderEvents(events) {
   const section = document.querySelector('#eventos');
@@ -279,7 +307,7 @@ function renderEvents(events) {
     section.hidden = false;
     return;
   }
-  container.innerHTML = events.slice().sort((a, b) => new Date(a.starts_at || 0) - new Date(b.starts_at || 0)).map(event => {
+  container.innerHTML = events.slice().map(normalizeSiteEvent).sort((a, b) => new Date(a.starts_at || 0) - new Date(b.starts_at || 0)).map(event => {
     let dateStr = event.date;
     if (!dateStr && event.starts_at) {
       try {
@@ -295,10 +323,18 @@ function renderEvents(events) {
     const loc = event.location || 'Consulte os pastores';
     const mapsLink = event.link_url || (loc.includes('Henrique') ? (window.maps?.sapopemba || '#') : (window.maps?.antonieta || '#'));
 
+    const dateParts = String(dateStr || '').split('·').map(s => s.trim());
+    const dayLabel = event.date_day || dateParts[0] || '20 de Dezembro';
+    const timeLabel = event.date_time || dateParts[1] || '18h30';
+    const shortAddress = loc.split('—')[0].trim() || 'Rua Júlio Parigot, 228';
+
     let media;
+    let telaoAction = '';
     if (event.animation === 'culto-missoes' || event.id === 'culto-de-missoes-2026') {
+      const missoesFooter = `${dateStr || 'Domingo, 29 de novembro · 18h30'} · Igreja ${cong}`;
+      telaoAction = `<a class="event-action-link" style="margin-left: 18px;" href="/missoes" target="_blank" rel="noreferrer">Abrir modo telão ⛶</a>`;
       media = `
-        <div class="event-media event-media-missoes" aria-label="Animação visual do Culto de Missões">
+        <div class="event-media event-media-missoes" aria-label="Animação visual do ${escapeHtml(event.title)}">
           <div class="missoes-anim-stage" data-missoes-stage title="Clique para tela cheia">
             <div class="missoes-blob missoes-b1" aria-hidden="true"></div>
             <div class="missoes-blob missoes-b2" aria-hidden="true"></div>
@@ -306,7 +342,7 @@ function renderEvents(events) {
             <div class="missoes-veil" aria-hidden="true"></div>
             <div class="missoes-scene on">
               <img class="missoes-logo" alt="Missão Semente" src="assets/logo-missao-semente.png">
-              <div class="missoes-big">Culto de Missões</div>
+              <div class="missoes-big">${escapeHtml(event.title || 'Culto de Missões')}</div>
             </div>
             <div class="missoes-scene">
               <div class="missoes-mid">Brasil <em>+</em> Angola</div>
@@ -326,30 +362,34 @@ function renderEvents(events) {
             <div class="missoes-scene">
               <img class="missoes-logo missoes-logo-sm" alt="Missão Semente" src="assets/logo-missao-semente.png">
               <div class="missoes-mid">Venha <em>semear</em> conosco!</div>
-              <div class="missoes-txt">Domingo, 29 de novembro · 18h30 · Igreja Vila Antonieta</div>
+              <div class="missoes-txt">${escapeHtml(missoesFooter)}</div>
             </div>
           </div>
         </div>`;
     } else if (event.animation === 'cantata-natal' || event.id === 'cantata-de-natal-2026') {
+      const cantataHeading = (event.title || '').toLowerCase() === 'cantata de natal'
+        ? 'Cantata<br>de Natal'
+        : escapeHtml(event.title || 'Cantata de Natal');
+      telaoAction = `<a class="event-action-link" style="margin-left: 18px;" href="/cantata" target="_blank" rel="noreferrer">Abrir modo telão ⛶</a>`;
       media = `
-        <div class="event-media event-media-anim" aria-label="Animação visual da Cantata de Natal">
-          <div class="cantata-anim-stage" data-cantata-stage>
+        <div class="event-media event-media-anim" aria-label="Animação visual da ${escapeHtml(event.title)}">
+          <div class="cantata-anim-stage" data-cantata-stage title="Clique para tela cheia" style="cursor:pointer;">
             <div class="cantata-arch" aria-hidden="true"></div>
             <div class="cantata-stars" aria-hidden="true"></div>
             <div class="cantata-scene on">
-              <h4 class="cantata-title">Cantata<br>de Natal</h4>
+              <h4 class="cantata-title">${cantataHeading}</h4>
               <div class="cantata-rule" aria-hidden="true"></div>
             </div>
             <div class="cantata-scene">
               <div class="cantata-kicker">Quando</div>
-              <div class="cantata-big" style="margin-top:3cqw">20 de Dezembro</div>
+              <div class="cantata-big" style="margin-top:3cqw">${escapeHtml(dayLabel)}</div>
               <div class="cantata-rule" aria-hidden="true"></div>
-              <div class="cantata-big" style="font-size:16cqw">18h30</div>
+              <div class="cantata-big" style="font-size:16cqw">${escapeHtml(timeLabel)}</div>
             </div>
             <div class="cantata-scene">
               <div class="cantata-kicker">Onde</div>
               <div class="cantata-rule" aria-hidden="true"></div>
-              <div class="cantata-big" style="font-size:9cqw">Rua Júlio Parigot, 228</div>
+              <div class="cantata-big" style="font-size:9cqw">${escapeHtml(shortAddress)}</div>
             </div>
             <div class="cantata-scene">
               <div class="cantata-it" style="font-size:9cqw">Venha celebrar o Natal conosco!</div>
@@ -373,7 +413,7 @@ function renderEvents(events) {
 
     const when = `<div class="event-detail"><span>Quando</span><p>${escapeHtml(dateStr || 'Em breve')}</p></div>`;
     const location = `<div class="event-detail"><span>Onde</span><p>${escapeHtml(loc)}</p></div>`;
-    const action = `<a class="event-action-link" href="${escapeHtml(mapsLink)}" target="_blank" rel="noreferrer">Ver endereço no mapa →</a>`;
+    const action = `<div class="event-actions-row"><a class="event-action-link" href="${escapeHtml(mapsLink)}" target="_blank" rel="noreferrer">Ver endereço no mapa →</a>${telaoAction}</div>`;
     const quote = event.description ? `<p class="event-quote">${escapeHtml(event.description)}</p>` : '';
     return `<article class="event-card reveal">${media}<div class="event-card-body"><span class="event-date">${escapeHtml(cong)} · ${escapeHtml(dateStr || '')}</span><h3>${escapeHtml(event.title)}</h3>${quote}${when}${location}${action}</div></article>`;
   }).join('');
@@ -466,50 +506,70 @@ function initCantataAnimation(stage) {
   tm = setTimeout(() => {
     go(1);
   }, T[0]);
+
+  stage.addEventListener('click', () => {
+    try {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        stage.requestFullscreen();
+      }
+    } catch (e) {}
+  });
+}
+
+function mergeEventsList(baseList, overrideList) {
+  const byId = new Map();
+  for (const item of baseList) {
+    if (item && item.id && item.id !== 'santa-ceia-mensal') {
+      byId.set(item.id, normalizeSiteEvent(item));
+    }
+  }
+  for (const item of overrideList) {
+    if (item && item.id && item.id !== 'santa-ceia-mensal') {
+      const prev = byId.get(item.id) || {};
+      byId.set(item.id, normalizeSiteEvent({ ...prev, ...item }));
+    }
+  }
+  return Array.from(byId.values()).filter(e => e.published !== false && e.is_published !== false);
 }
 
 async function loadPublishedEvents() {
   const section = document.querySelector('#eventos');
   const container = document.querySelector('[data-events]');
   if (!section || !container) return;
-  let events = [...localEvents];
+  let currentEvents = [...localEvents];
 
-  // Checa cache local criado pelo Painel Pastoral
+  // 1. Checa cache local gerido pelo Painel Pastoral
   try {
     const cached = localStorage.getItem('semente_pastoral_events');
     if (cached) {
       const parsed = JSON.parse(cached);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        const valid = parsed.filter(e => e.published !== false && e.is_published !== false);
-        if (valid.length > 0) events = valid;
+        currentEvents = mergeEventsList(localEvents, parsed);
       }
     }
   } catch (e) {}
 
+  renderEvents(currentEvents);
+
+  // 2. Consulta o Firebase Firestore com filtro is_published == true (zero erro 403)
   if (window.db) {
     try {
-      window.db.collection('events').onSnapshot(snapshot => {
+      window.db.collection('events').where('is_published', '==', true).onSnapshot(snapshot => {
         if (!snapshot.empty) {
           const remoteEvents = [];
           snapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.published !== false && data.is_published !== false) {
-              remoteEvents.push({ id: doc.id, ...data });
-            }
+            remoteEvents.push({ id: doc.id, ...doc.data() });
           });
           if (remoteEvents.length > 0) {
-            renderEvents(remoteEvents);
+            const merged = mergeEventsList(currentEvents, remoteEvents);
+            renderEvents(merged);
           }
         }
-      }, err => {
-        console.warn('Usando eventos locais/cache:', err);
-      });
-    } catch (error) {
-      console.warn('Usando eventos locais:', error);
-    }
+      }, () => {});
+    } catch (error) {}
   }
-
-  renderEvents(events);
 }
 
 loadPublishedEvents();
@@ -525,7 +585,7 @@ window.addEventListener('semente:events_update', () => {
 
 
 /* ===== Playlists do mês e pedido de oração ===== */
-// Para atualizar a cada mês, troque o mês e os links abaixo.
+// Para atualizar a cada mês, troque no Painel Pastoral (/painel) ou abaixo.
 const PLAYLISTS = {
   month: 'Novembro',
   items: [
@@ -538,7 +598,40 @@ const PRAYER_EMAIL = 'missaosemente2012@gmail.com';
 (function initPlaylists(){
   const box = document.querySelector('[data-playlists]');
   if (!box) return;
-  box.innerHTML = PLAYLISTS.items.map(p => `<article class="playlist-card"><span class="playlist-icon" aria-hidden="true">♪</span><small>Playlist de ${PLAYLISTS.month}</small><h3>${p.church}</h3><p>Todas as músicas que vamos cantar em ${PLAYLISTS.month.toLowerCase()} na congregação ${p.church}.</p><a class="button button-primary" href="${p.url}" target="_blank" rel="noreferrer">Ouvir no YouTube Music <span aria-hidden="true">→</span></a></article>`).join('');
+
+  function renderPlaylistCards(monthName, sapopembaUrl, antonietaUrl) {
+    const m = monthName || PLAYLISTS.month;
+    const items = [
+      { church: 'Jardim Sapopemba', url: sapopembaUrl || PLAYLISTS.items[0].url },
+      { church: 'Vila Antonieta', url: antonietaUrl || PLAYLISTS.items[1].url }
+    ];
+    box.innerHTML = items.map(p => `<article class="playlist-card"><span class="playlist-icon" aria-hidden="true">♪</span><small>Playlist de ${escapeHtml(m)}</small><h3>${escapeHtml(p.church)}</h3><p>Todas as músicas que vamos cantar em ${escapeHtml(m.toLowerCase())} na congregação ${escapeHtml(p.church)}.</p><a class="button button-primary" href="${escapeHtml(p.url)}" target="_blank" rel="noreferrer">Ouvir no YouTube Music <span aria-hidden="true">→</span></a></article>`).join('');
+  }
+
+  renderPlaylistCards(PLAYLISTS.month, PLAYLISTS.items[0].url, PLAYLISTS.items[1].url);
+
+  try {
+    const stored = JSON.parse(localStorage.getItem('semente_pastoral_playlists') || 'null');
+    if (stored && stored.month) {
+      renderPlaylistCards(stored.month, stored.sapopembaUrl, stored.antonietaUrl);
+    }
+  } catch (e) {}
+
+  if (window.db) {
+    try {
+      window.db.collection('config').doc('playlists').onSnapshot(doc => {
+        if (doc && doc.exists) {
+          const d = doc.data();
+          renderPlaylistCards(d.month, d.sapopembaUrl, d.antonietaUrl);
+        }
+      }, () => {});
+    } catch (e) {}
+  }
+
+  window.addEventListener('semente:playlists_update', (e) => {
+    const d = e.detail || {};
+    renderPlaylistCards(d.month, d.sapopembaUrl, d.antonietaUrl);
+  });
 })();
 
 (function initPrayerForm(){

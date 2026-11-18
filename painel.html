@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="assets/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nunito+Sans:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..800&family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="painel.css" />
   </head>
@@ -30,7 +30,8 @@
             <span class="badge-dot"></span>
             <span id="firebase-badge-text">Firebase...</span>
           </div>
-          <a href="/" target="_blank" class="quiet-link" title="Abrir site da igreja em nova aba">Ver site ↗</a>
+          <a href="/eventos" target="_blank" class="quiet-link" title="Abrir página de Eventos em nova aba">Ver Agenda ↗</a>
+          <a href="/" target="_blank" class="quiet-link" title="Abrir site da igreja em nova aba">Ver Site ↗</a>
           <button id="btn-logout" class="button button-dark btn-logout" style="display: none;" type="button">Bloquear / Sair</button>
         </div>
       </div>
@@ -41,7 +42,7 @@
       <div class="lock-card">
         <div class="lock-icon" aria-hidden="true">🕊️</div>
         <h1>Área da Liderança Pastoral</h1>
-        <p>Digite o código de acesso rápido (PIN) para gerenciar pedidos de oração, transmissões e avisos.</p>
+        <p>Digite o código de acesso rápido (PIN) para gerenciar a Cantata de Natal, o Culto de Missões, pedidos de oração e transmissões.</p>
         <form id="pin-form" class="pin-form" novalidate autocomplete="off">
           <div class="pin-input-wrap">
             <input 
@@ -79,31 +80,152 @@
     <!-- Tela 2: Dashboard Completo do Painel -->
     <main id="painel-dashboard" class="painel-dashboard" style="display: none;">
       <div class="dashboard-container">
-        <!-- Navegação em Abas -->
+        <!-- Navegação em Abas (Aba de Eventos em destaque para gestão imediata da Cantata e Missões) -->
         <nav class="painel-nav" aria-label="Abas do painel">
-          <button class="nav-tab active" data-tab="tab-oracao" type="button">
+          <button class="nav-tab active" data-tab="tab-eventos" type="button">
+            <span class="tab-icon">📅</span> Eventos Especiais (Missões & Cantata)
+          </button>
+          <button class="nav-tab" data-tab="tab-oracao" type="button">
             <span class="tab-icon">🕊️</span> Pedidos de Oração
             <span id="badge-oracao-count" class="tab-badge">0</span>
           </button>
           <button class="nav-tab" data-tab="tab-live" type="button">
-            <span class="tab-icon">🔴</span> Controle de Live & Banners
-          </button>
-          <button class="nav-tab" data-tab="tab-eventos" type="button">
-            <span class="tab-icon">📅</span> Eventos & Avisos
+            <span class="tab-icon">🔴</span> Live, Banners & Playlists
           </button>
         </nav>
 
         <!-- Alerta de Regras do Firebase Firestore -->
         <div id="firebase-rules-alert" class="firebase-rules-alert" style="display: none;">
           <div class="alert-content">
-            <strong>⚠️ Sincronização em Nuvem (Firebase Firestore):</strong>
-            <p>O projeto <code>semente-multiplicacao</code> está conectado, mas as regras de segurança no console do Firebase precisam ser publicadas para permitir a gravação remota. Enquanto isso, o painel funciona com sincronização local em tempo real.</p>
+            <strong>☁️ Liberação de Gravação Remota no Console do Firebase (`semente-multiplicacao`):</strong>
+            <p>A leitura pública de eventos e o envio de pedidos de oração já estão ativos no Firebase. Para liberar também a edição remota pelo painel em múltiplos aparelhos, clique ao lado, copie as regras e clique em <strong>Publicar</strong> no Console do Firebase. Neste aparelho, todas as alterações já funcionam em tempo real!</p>
           </div>
-          <button id="btn-show-rules" class="button button-small button-rules" type="button">📋 Ver / Copiar Regras do Firestore</button>
+          <button id="btn-show-rules" class="button button-small button-rules" type="button">📋 Copiar / Publicar Regras no Firebase</button>
         </div>
 
-        <!-- Aba 1: Pedidos de Oração -->
-        <section id="tab-oracao" class="dashboard-tab active">
+        <!-- Aba 1 (Principal): Eventos & Avisos (Cantata de Natal e Culto de Missões) -->
+        <section id="tab-eventos" class="dashboard-tab active">
+          <div class="tab-header">
+            <div>
+              <h2>Gestão de Conteúdo · Culto de Missões & Cantata de Natal</h2>
+              <p>Edite datas, horários, textos das animações, locais, publique/oculte na agenda ou abra os telões 16:9 para projeção na igreja.</p>
+            </div>
+            <div class="tab-header-actions">
+              <button id="btn-open-event-form" class="button button-primary" type="button">+ Novo Evento</button>
+              <button id="btn-restore-default-events" class="button button-dark" type="button" title="Restaurar configuração original do Culto de Missões e da Cantata de Natal">🔄 Restaurar Oficiais</button>
+            </div>
+          </div>
+
+          <!-- Atalhos de Telão 16:9 e Ações Rápidas para Culto de Missões e Cantata de Natal -->
+          <div class="featured-events-banner">
+            <div class="featured-shortcut-card shortcut-missoes">
+              <div class="shortcut-badge">🌍 Destaque 01 · Animação Ativa</div>
+              <h3>Culto de Missões (Brasil + Angola)</h3>
+              <p>Animação em 5 cenas com orbes luminosos, versículo Mateus 28:19 e boas-vindas multilíngues.</p>
+              <div class="shortcut-actions">
+                <button type="button" class="btn-small btn-edit-featured" data-quick-edit="culto-de-missoes-2026">✏️ Editar Culto de Missões</button>
+                <a href="/missoes" target="_blank" class="btn-small btn-telao">🖥️ Abrir Telão 16:9 ↗</a>
+                <a href="/eventos" target="_blank" class="btn-small btn-view-agenda">👁️ Ver na Agenda ↗</a>
+              </div>
+            </div>
+
+            <div class="featured-shortcut-card shortcut-cantata">
+              <div class="shortcut-badge">🎄 Destaque 02 · Animação Ativa</div>
+              <h3>Cantata de Natal</h3>
+              <p>Animação natalina em 5 cenas com arco dourado, estrelas cadentes, data, horário e endereço.</p>
+              <div class="shortcut-actions">
+                <button type="button" class="btn-small btn-edit-featured" data-quick-edit="cantata-de-natal-2026">✏️ Editar Cantata de Natal</button>
+                <a href="/cantata" target="_blank" class="btn-small btn-telao">🖥️ Abrir Telão 16:9 ↗</a>
+                <a href="/eventos" target="_blank" class="btn-small btn-view-agenda">👁️ Ver na Agenda ↗</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulário de Criar / Editar Evento -->
+          <div id="event-form-card" class="event-form-card" style="display: none;">
+            <h3 id="event-form-title">Cadastrar / Editar Evento</h3>
+            <form id="event-form" novalidate>
+              <input id="event-edit-id" type="hidden" value="" />
+
+              <div class="form-row">
+                <label>
+                  Título do Evento *
+                  <input id="event-title" type="text" required placeholder="Ex.: Cantata de Natal ou Culto de Missões" />
+                </label>
+                <label>
+                  Congregação *
+                  <select id="event-congregation" required>
+                    <option value="Vila Antonieta">Vila Antonieta</option>
+                    <option value="Jardim Sapopemba">Jardim Sapopemba</option>
+                    <option value="Ambas as congregações">Ambas as congregações</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-row">
+                <label>
+                  Dia / Data de Exibição (aparece no card e na animação) *
+                  <input id="event-date-day" type="text" required placeholder="Ex.: Domingo, 29 de Novembro ou 20 de Dezembro" />
+                </label>
+                <label>
+                  Horário (aparece no card e na animação) *
+                  <input id="event-date-time" type="text" required placeholder="Ex.: 18h30" />
+                </label>
+              </div>
+
+              <div class="form-row">
+                <label>
+                  Endereço / Local *
+                  <input id="event-location" type="text" required placeholder="Ex.: Rua Júlio Parigot, 228 — Vila Antonieta" />
+                </label>
+                <label>
+                  Tipo de Arte / Animação no Site *
+                  <select id="event-animation">
+                    <option value="culto-missoes">🌍 Animação Oficial: Culto de Missões (Brasil + Angola)</option>
+                    <option value="cantata-natal">🎄 Animação Oficial: Cantata de Natal (Vinho & Dourado)</option>
+                    <option value="none">🕊️ Card Padrão da Igreja (ou Imagem / Vídeo)</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-row">
+                <label>
+                  Data no Calendário (para ordenar quem aparece primeiro)
+                  <input id="event-starts-at" type="datetime-local" value="2026-11-29T18:30" />
+                </label>
+                <label>
+                  URL de Imagem ou Vídeo (opcional, caso não use animação)
+                  <input id="event-image-path" type="text" placeholder="Ex.: assets/encontro-mulheres.jpeg ou https://..." />
+                </label>
+              </div>
+
+              <label>
+                Descrição / Versículo / Convite *
+                <textarea id="event-description" rows="3" placeholder="Texto que aparece nos detalhes do evento e no convite da animação..."></textarea>
+              </label>
+
+              <div class="form-row form-checkbox-row" style="margin-top: 14px;">
+                <label class="checkbox-label">
+                  <input id="event-published" type="checkbox" checked />
+                  Publicar imediatamente na página de Agenda (`/eventos`)
+                </label>
+              </div>
+
+              <div class="event-form-actions">
+                <button type="submit" class="button button-primary">Salvar Alterações no Evento 💾</button>
+                <button id="btn-cancel-event" type="button" class="button button-dark">Cancelar</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Lista de Eventos com Prévia ao Vivo das Animações -->
+          <div id="events-list" class="events-admin-grid">
+            <p class="loading-state">Carregando eventos...</p>
+          </div>
+        </section>
+
+        <!-- Aba 2: Pedidos de Oração -->
+        <section id="tab-oracao" class="dashboard-tab" style="display: none;">
           <div class="tab-header">
             <div>
               <h2>Pedidos de Oração Recebidos</h2>
@@ -147,12 +269,12 @@
           </div>
         </section>
 
-        <!-- Aba 2: Controle de Live & Banners -->
+        <!-- Aba 3: Controle de Live, Banners & Playlists -->
         <section id="tab-live" class="dashboard-tab" style="display: none;">
           <div class="tab-header">
             <div>
-              <h2>Controle da Transmissão e Banners</h2>
-              <p>Ative a transmissão manual fora de hora ou selecione qual banner sobe no topo da página inicial.</p>
+              <h2>Controle da Transmissão, Banners e Playlists</h2>
+              <p>Ative a transmissão manual na Home ou atualize os links das playlists do Louvor do Mês.</p>
             </div>
           </div>
 
@@ -245,72 +367,31 @@
               <span id="live-save-status" class="save-status" role="status"></span>
             </div>
           </div>
-        </section>
 
-        <!-- Aba 3: Eventos & Avisos -->
-        <section id="tab-eventos" class="dashboard-tab" style="display: none;">
-          <div class="tab-header">
-            <div>
-              <h2>Eventos e Avisos Especiais</h2>
-              <p>Cadastre vigílias, chá de mulheres, retiros e cultos especiais para exibir na agenda.</p>
-            </div>
-            <div class="tab-header-actions">
-              <button id="btn-open-event-form" class="button button-primary" type="button">+ Cadastrar Novo Evento</button>
-            </div>
-          </div>
-
-          <!-- Formulário de Novo Evento (oculto inicialmente) -->
-          <div id="event-form-card" class="event-form-card" style="display: none;">
-            <h3 id="event-form-title">Cadastrar Novo Evento</h3>
-            <form id="event-form" novalidate>
-              <div class="form-row">
-                <label>
-                  Título do Evento *
-                  <input id="event-title" type="text" required placeholder="Ex.: Chá de Mulheres com Propósito" />
-                </label>
-                <label>
-                  Congregação *
-                  <select id="event-congregation" required>
-                    <option value="Ambas as congregações">Ambas as congregações</option>
-                    <option value="Jardim Sapopemba">Jardim Sapopemba</option>
-                    <option value="Vila Antonieta">Vila Antonieta</option>
-                  </select>
-                </label>
-              </div>
-
-              <div class="form-row">
-                <label>
-                  Data e Horário *
-                  <input id="event-date" type="text" required placeholder="Ex.: Sábado, 28 de Novembro às 16h" />
-                </label>
-                <label>
-                  Endereço / Local
-                  <input id="event-location" type="text" placeholder="Ex.: Rua Júlio Parigot, 228 · Vila Antonieta" />
-                </label>
-              </div>
-
+          <!-- Gestão das Playlists do Louvor do Mês -->
+          <div class="live-control-card" style="margin-top: 28px;">
+            <h3>🎵 Louvor do Mês (Playlists do YouTube Music)</h3>
+            <p class="field-hint">Atualize o mês e os links das playlists exibidas na página <code>/contato#playlists</code>:</p>
+            <div class="form-row">
               <label>
-                Descrição / Recado
-                <textarea id="event-description" rows="3" placeholder="Informações adicionais para os membros e visitantes..."></textarea>
+                Mês de Referência
+                <input id="playlist-month" type="text" value="Novembro" placeholder="Ex.: Novembro ou Dezembro" />
               </label>
-
-              <div class="form-row form-checkbox-row">
-                <label class="checkbox-label">
-                  <input id="event-published" type="checkbox" checked />
-                  Publicar imediatamente na página de Agenda
-                </label>
-              </div>
-
-              <div class="event-form-actions">
-                <button type="submit" class="button button-primary">Salvar Evento 💾</button>
-                <button id="btn-cancel-event" type="button" class="button button-dark">Cancelar</button>
-              </div>
-            </form>
-          </div>
-
-          <!-- Lista de Eventos -->
-          <div id="events-list" class="events-admin-grid">
-            <p class="loading-state">Carregando eventos...</p>
+              <label>
+                Link da Playlist · Vila Antonieta
+                <input id="playlist-antonieta" type="url" value="https://music.youtube.com/playlist?list=PLVySTvS_ScAM&si=gRjyeu-SeU9EsXgU" />
+              </label>
+            </div>
+            <div class="form-row">
+              <label style="grid-column: 1 / -1;">
+                Link da Playlist · Jardim Sapopemba
+                <input id="playlist-sapopemba" type="url" value="https://music.youtube.com/search?q=Igreja+Evang%C3%A9lica+Semente+da+Multiplica%C3%A7%C3%A3o+Louvor" />
+              </label>
+            </div>
+            <div class="live-actions">
+              <button id="btn-save-playlists" class="button button-primary" type="button">Salvar Playlists do Mês 💾</button>
+              <span id="playlist-save-status" class="save-status" role="status"></span>
+            </div>
           </div>
         </section>
       </div>
@@ -324,7 +405,7 @@
           <button id="btn-close-rules" type="button" class="btn-close" aria-label="Fechar modal">✕</button>
         </div>
         <div class="modal-body">
-          <p>Para ativar a gravação em nuvem no seu projeto <strong>semente-multiplicacao</strong>:</p>
+          <p>Para ativar a gravação do painel no seu projeto <strong>semente-multiplicacao</strong>:</p>
           <ol class="rules-steps">
             <li>Acesse o <a href="https://console.firebase.google.com/project/semente-multiplicacao/firestore/rules" target="_blank" rel="noreferrer">Console do Firebase (Aba Regras) ↗</a></li>
             <li>Cole o código abaixo e clique em <strong>Publicar (Publish)</strong>:</li>
