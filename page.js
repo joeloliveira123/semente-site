@@ -12,7 +12,7 @@ if (!favicon) {
   favicon.type = 'image/png';
   document.head.append(favicon);
 }
-favicon.href = 'assets/logo.webp';
+favicon.href = '/assets/favicon.png';
 
 function renderHeader() {
   return `<header class="site-header" data-header><a class="brand" href="/" aria-label="Semente da Multiplicação — início"><span class="brand-mark" aria-hidden="true"><img src="assets/logo.webp" alt="Logo Semente da Multiplicação" width="44" height="44" /></span><span class="brand-text"><strong>Semente</strong><small>da Multiplicação</small></span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span><b class="sr-only">Abrir menu</b></button><nav class="main-nav" id="main-nav" aria-label="Navegação principal"><a href="/historia">Sobre nós</a><a href="/locais">Locais</a><a href="/eventos">Agenda</a><a href="/projetos">Projetos</a><a href="/memorias">Memórias</a><a class="nav-cta" href="/contato">Fale conosco <span aria-hidden="true">→</span></a></nav></header>`;
