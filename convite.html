@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Convite Especial: Culto de Missões — Brasil & Angola | Semente da Multiplicação</title>
+  <meta name="description" content="Você é nosso convidado especial para o Culto de Missões Brasil + Angola. Dia 29 de novembro às 18h30 na Igreja Semente da Multiplicação (Vila Antonieta).">
+  
+  <!-- Open Graph / Redes Sociais / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Convite Especial: Culto de Missões — Brasil 🇧🇷 + Angola 🇦🇴">
+  <meta property="og:description" content="Você é nosso convidado especial! Domingo, 29 de novembro às 18h30 · Igreja Semente da Multiplicação (Vila Antonieta). Assista ao vídeo de convite.">
+  <meta property="og:image" content="/assets/banner-culto-familia-antonieta.jpg">
+
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0b0907;
+      --card-bg: rgba(26, 21, 16, 0.85);
+      --gold: #d4af37;
+      --gold-light: #f7e089;
+      --gold-dark: #997a15;
+      --gold-gradient: linear-gradient(135deg, #f7e089 0%, #d4af37 50%, #aa820a 100%);
+      --text: #f5efe6;
+      --text-muted: #b8aba0;
+      --border-gold: rgba(212, 175, 55, 0.35);
+      --green-brazil: #009c3b;
+      --red-angola: #c8102e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 50% 15%, rgba(212, 175, 55, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 85% 80%, rgba(200, 16, 46, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 15% 85%, rgba(0, 156, 59, 0.08) 0%, transparent 50%);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 24px 16px 48px;
+      overflow-x: hidden;
+    }
+
+    /* Partículas sutis */
+    .ambient-glow {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 0%, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Header e Marca */
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid var(--border-gold);
+      border-radius: 999px;
+      backdrop-filter: blur(12px);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .brand-badge img {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+    }
+
+    /* Card do Vídeo */
+    .video-card {
+      width: 100%;
+      position: relative;
+      border-radius: 20px;
+      padding: 4px;
+      background: linear-gradient(145deg, rgba(247, 224, 137, 0.45), rgba(212, 175, 55, 0.1), rgba(170, 130, 10, 0.35));
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 35px rgba(212, 175, 55, 0.2);
+      animation: scaleUp 0.8s ease-out;
+    }
+
+    .video-inner {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: 17px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .video-inner video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Controle de som flutuante */
+    .sound-pill {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-light);
+      padding: 8px 14px;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+      z-index: 5;
+    }
+
+    .sound-pill:hover {
+      background: rgba(212, 175, 55, 0.25);
+      transform: translateY(-2px);
+    }
+
+    /* Conteúdo do Convite */
+    .invite-card {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--border-gold);
+      border-radius: 24px;
+      padding: 28px 24px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .flags-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 1.4rem;
+    }
+
+    .flags-divider {
+      width: 32px;
+      height: 2px;
+      background: var(--gold-gradient);
+      border-radius: 2px;
+      opacity: 0.7;
+    }
+
+    .invite-subtitle {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: var(--gold-light);
+      font-size: 1.15rem;
+      letter-spacing: 0.02em;
+    }
+
+    .invite-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 5vw, 2.3rem);
+      font-weight: 900;
+      line-height: 1.15;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .verse {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      padding: 0 10px;
+    }
+
+    .verse b {
+      color: var(--gold-light);
+    }
+
+    /* Info Grid */
+    .details-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .detail-icon {
+      font-size: 1.3rem;
+      line-height: 1;
+      padding-top: 2px;
+    }
+
+    .detail-text h4 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gold-light);
+      margin-bottom: 2px;
+    }
+
+    .detail-text p {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .detail-text small {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Botões de Ação */
+    .actions-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-gold {
+      background: var(--gold-gradient);
+      color: #120e06;
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.35);
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.5);
+    }
+
+    .btn-whatsapp {
+      background: #25d366;
+      color: #05260f;
+      box-shadow: 0 6px 18px rgba(37, 211, 102, 0.25);
+    }
+
+    .btn-whatsapp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-gold);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold-light);
+    }
+
+    /* QR Code Card Expansível / Para a Igreja */
+    .church-qr-card {
+      width: 100%;
+      background: rgba(20, 16, 12, 0.75);
+      border: 1px dashed var(--border-gold);
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      text-align: left;
+    }
+
+    .church-qr-info h5 {
+      color: var(--gold-light);
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+
+    .church-qr-info p {
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .btn-qr-view {
+      padding: 9px 16px;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    /* Modal do QR Code */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .modal-content {
+      background: #181410;
+      border: 1px solid var(--gold);
+      border-radius: 24px;
+      padding: 28px 20px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .qr-frame {
+      background: #fff;
+      padding: 16px;
+      border-radius: 16px;
+      display: inline-block;
+      margin: 16px 0;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .qr-frame img {
+      width: 200px;
+      height: 200px;
+      display: block;
+    }
+
+    .footer {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .footer a {
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scaleUp {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+      }
+      .ambient-glow, .brand-badge, .video-card, .actions-grid, .church-qr-card, .footer, .modal-close, button {
+        display: none !important;
+      }
+      .modal-overlay {
+        position: static !important;
+        display: block !important;
+        background: none !important;
+        backdrop-filter: none !important;
+        padding: 0 !important;
+      }
+      .modal-content {
+        background: #fff !important;
+        border: 2px solid #000 !important;
+        box-shadow: none !important;
+        max-width: 100% !important;
+        padding: 30px !important;
+      }
+      .modal-content h3 {
+        color: #000 !important;
+        font-size: 26pt !important;
+      }
+      .modal-content p {
+        color: #333 !important;
+        font-size: 14pt !important;
+      }
+      .qr-frame {
+        box-shadow: none !important;
+        border: 2px solid #333 !important;
+        margin: 24px 0 !important;
+      }
+      .qr-frame img {
+        width: 300px !important;
+        height: 300px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="container">
+    
+    <!-- Top Badge -->
+    <div class="brand-badge">
+      <img src="/assets/favicon.png" alt="Semente da Multiplicação">
+      <span>Igreja Semente da Multiplicação</span>
+    </div>
+
+    <!-- Video Card -->
+    <div class="video-card">
+      <div class="video-inner">
+        <video id="inviteVideo" autoplay loop muted playsinline preload="auto" poster="/assets/banner-culto-familia-antonieta.jpg">
+          <source src="/assets/culto-de-missoes.mp4" type="video/mp4">
+          Seu navegador não suporta a exibição deste vídeo.
+        </video>
+        <button class="sound-pill" id="soundBtn" aria-label="Ativar som do vídeo">
+          <span id="soundIcon">🔊</span>
+          <span id="soundText">Ativar Som</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Informações do Convite -->
+    <main class="invite-card">
+      <div class="flags-row">
+        <span>🇧🇷</span>
+        <div class="flags-divider"></div>
+        <span>🇦🇴</span>
+      </div>
+
+      <p class="invite-subtitle">Você é nosso convidado especial</p>
+      <h1 class="invite-title">Culto de Missões</h1>
+
+      <p class="verse">
+        «Ide por todo o mundo e pregai o evangelho a toda criatura.»<br>
+        <b>Marcos 16:15</b>
+      </p>
+
+      <div class="details-box">
+        <div class="detail-item">
+          <div class="detail-icon">📅</div>
+          <div class="detail-text">
+            <h4>Quando</h4>
+            <p>Domingo, 29 de Novembro às 18h30</p>
+            <small>Chegue alguns minutos antes para ter um bom lugar</small>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-icon">📍</div>
+          <div class="detail-text">
+            <h4>Onde</h4>
+            <p>Igreja Semente da Multiplicação</p>
+            <small>Rua Júlio Parigot, 228 — Vila Antonieta, São Paulo - SP</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ações -->
+      <div class="actions-grid">
+        <a class="btn btn-gold" href="https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP" target="_blank" rel="noopener noreferrer">
+          <span>🗺️</span> Como Chegar (Google Maps)
+        </a>
+
+        <a class="btn btn-whatsapp" id="shareWaBtn" href="#" target="_blank" rel="noopener noreferrer">
+          <span>💬</span> Convidar um Amigo no WhatsApp
+        </a>
+
+        <a class="btn btn-outline" id="calBtn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Culto+de+Miss%C3%B5es+%E2%80%94+Brasil+%2B+Angola&dates=20261129T213000Z/20261129T233000Z&details=Voc%C3%AA+%C3%A9+nosso+convidado+especial+para+o+Culto+de+Miss%C3%B5es+Brasil+%2B+Angola+na+Igreja+Semente+da+Multiplica%C3%A7%C3%A3o.+Endere%C3%A7o%3A+Rua+J%C3%BAlio+Parigot%2C+228+-+Vila+Antonieta&location=Rua+J%C3%BAlio+Parigot%2C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP" target="_blank" rel="noopener noreferrer">
+          <span>📅</span> Salvar no Google Agenda
+        </a>
+      </div>
+    </main>
+
+    <!-- Card de QR Code para os obreiros/igreja espalharem -->
+    <div class="church-qr-card">
+      <div class="church-qr-info">
+        <h5>Espalhe este convite na Igreja</h5>
+        <p>Gere e imprima o QR Code para colar no templo ou colocar nos avisos.</p>
+      </div>
+      <button class="btn btn-outline btn-qr-view" id="openQrModalBtn">
+        Ver QR Code 📲
+      </button>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+      <p>Igreja Evangélica Semente da Multiplicação &bull; <a href="/">Visitar site oficial</a></p>
+    </footer>
+
+  </div>
+
+  <!-- Modal do QR Code -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeQrModalBtn" aria-label="Fechar">&times;</button>
+      <h3 style="font-family:'Cinzel', serif; color:var(--gold-light); margin-bottom:6px;">QR Code do Convite</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted);">Aponte a câmera do celular para abrir o vídeo e o convite completo.</p>
+      
+      <div class="qr-frame">
+        <img id="qrImage" src="" alt="QR Code do Convite">
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button class="btn btn-gold" onclick="window.print()">
+          🖨️ Imprimir Cartaz
+        </button>
+        <button class="btn btn-outline" id="copyLinkBtn">
+          📋 Copiar Link do Convite
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configurações do Vídeo e Áudio
+    const video = document.getElementById('inviteVideo');
+    const soundBtn = document.getElementById('soundBtn');
+    const soundIcon = document.getElementById('soundIcon');
+    const soundText = document.getElementById('soundText');
+
+    // Desmutar ao clicar no botão
+    soundBtn.addEventListener('click', () => {
+      if (video.muted) {
+        video.muted = false;
+        soundIcon.textContent = '🔇';
+        soundText.textContent = 'Silenciar';
+      } else {
+        video.muted = true;
+        soundIcon.textContent = '🔊';
+        soundText.textContent = 'Ativar Som';
+      }
+    });
+
+    // Permite tocar ao clicar no próprio vídeo
+    video.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    });
+
+    // Link do WhatsApp com URL dinâmica da página atual
+    const currentUrl = window.location.href;
+    const shareText = encodeURIComponent(
+      `Olá! Você é nosso convidado especial para o *Culto de Missões (Brasil 🇧🇷 + Angola 🇦🇴)* na Igreja Semente da Multiplicação! 🌍✨\n\n` +
+      `📅 *Data:* Domingo, 29 de Novembro às 18h30\n` +
+      `📍 *Local:* Rua Júlio Parigot, 228 — Vila Antonieta\n\n` +
+      `Assista ao vídeo e veja todas as informações aqui:\n${currentUrl}`
+    );
+    document.getElementById('shareWaBtn').href = `https://api.whatsapp.com/send?text=${shareText}`;
+
+    // Gerar QR Code dinâmico apontando para a URL desta página
+    const qrImage = document.getElementById('qrImage');
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=${encodeURIComponent(currentUrl)}`;
+    qrImage.src = qrUrl;
+
+    // Controle do Modal
+    const qrModal = document.getElementById('qrModal');
+    const openQrModalBtn = document.getElementById('openQrModalBtn');
+    const closeQrModalBtn = document.getElementById('closeQrModalBtn');
+
+    openQrModalBtn.addEventListener('click', () => {
+      qrModal.classList.add('active');
+    });
+
+    closeQrModalBtn.addEventListener('click', () => {
+      qrModal.classList.remove('active');
+    });
+
+    qrModal.addEventListener('click', (e) => {
+      if (e.target === qrModal) {
+        qrModal.classList.remove('active');
+      }
+    });
+
+    // Copiar Link
+    const copyLinkBtn = document.getElementById('copyLinkBtn');
+    copyLinkBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(currentUrl);
+        const originalText = copyLinkBtn.innerHTML;
+        copyLinkBtn.innerHTML = '✅ Link Copiado!';
+        setTimeout(() => {
+          copyLinkBtn.innerHTML = originalText;
+        }, 2000);
+      } catch (err) {
+        prompt('Copie o link abaixo:', currentUrl);
+      }
+    });
+  </script>
+</body>
+</html>
