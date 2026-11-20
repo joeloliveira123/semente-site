@@ -9,5 +9,14 @@
     { "source": "/cantata", "destination": "/cantata.html" },
     { "source": "/convite", "destination": "/convite.html" },
     { "source": "/convite-missoes", "destination": "/convite.html" }
+  ],
+  "headers": [
+    {
+      "source": "/assets/culto-de-missoes.ics",
+      "headers": [
+        { "key": "Content-Type", "value": "text/calendar; charset=utf-8" },
+        { "key": "Content-Disposition", "value": "inline; filename=\"culto-de-missoes.ics\"" }
+      ]
+    }
   ]
 }

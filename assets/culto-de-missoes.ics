@@ -1,0 +1,26 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Igreja Evangelica Semente da Multiplicacao//Convite Missoes//PT
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:culto-de-missoes-2026@sementedamultiplicacao.vercel.app
+DTSTAMP:20261120T120000Z
+DTSTART:20261129T213000Z
+DTEND:20261129T233000Z
+SUMMARY:Culto de Missões — Brasil + Angola
+DESCRIPTION:Você é nosso convidado especial para o Culto de Missões (B
+ rasil + Angola) na Igreja Evangélica Semente da Multiplicação. Endere
+ ço: Rua Júlio Parigot, 228 — Vila Antonieta, São Paulo - SP. Mapa: 
+ https://www.google.com/maps/search/?api=1&query=Rua+J%C3%BAlio+Parigot%2
+ C+228%2C+Vila+Antonieta%2C+S%C3%A3o+Paulo+-+SP
+LOCATION:Igreja Semente da Multiplicação - Rua Júlio Parigot, 228, Vil
+ a Antonieta, São Paulo - SP
+URL:https://sementedamultiplicacao.vercel.app/convite
+BEGIN:VALARM
+TRIGGER:-PT2H
+ACTION:DISPLAY
+DESCRIPTION:Lembrete: Culto de Missões hoje às 18h30 na Vila Antonieta
+END:VALARM
+END:VEVENT
+END:VCALENDAR
