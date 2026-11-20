@@ -396,7 +396,7 @@
       let telaoLink = '';
       if (evt.animation === 'culto-missoes' || evt.id === 'culto-de-missoes-2026') {
         animBadge = '<span class="event-anim-pill">🌍 Animação Ativa: Culto de Missões (Brasil + Angola)</span>';
-        telaoLink = `<a class="btn-small btn-whatsapp" style="background:#0b8a3e;" href="/missoes" target="_blank" rel="noreferrer">🖥️ Telão Missões 16:9 ↗</a> <a class="btn-small btn-whatsapp" style="background:#d4af37; color:#120e06; font-weight:700;" href="/convite" target="_blank" rel="noreferrer">📲 Convite & QR Code ↗</a>`;
+        telaoLink = `<a class="btn-small btn-whatsapp" style="background:#0b8a3e;" href="/missoes" target="_blank" rel="noreferrer">🖥️ Telão Missões 16:9 ↗</a> <a class="btn-small btn-whatsapp" style="background:#d4af37; color:#120e06; font-weight:700;" href="/convite" target="_blank" rel="noreferrer">✨ Ver Convite ↗</a>`;
       } else if (evt.animation === 'cantata-natal' || evt.id === 'cantata-de-natal-2026') {
         animBadge = '<span class="event-anim-pill">🎄 Animação Ativa: Cantata de Natal</span>';
         telaoLink = `<a class="btn-small btn-whatsapp" style="background:#a30f26;" href="/cantata" target="_blank" rel="noreferrer">🖥️ Telão Cantata 16:9 ↗</a>`;
